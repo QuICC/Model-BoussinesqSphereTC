@@ -15,14 +15,14 @@
 
 // Class include
 //
-#include "Model/Boussinesq/Sphere/TC/Transport.hpp"
+#include "QuICC/Model/Boussinesq/Sphere/TC/Transport.hpp"
 
 // Project includes
 //
-#include "Base/Typedefs.hpp"
-#include "Base/MathConstants.hpp"
-#include "Enums/NonDimensional.hpp"
-#include "PhysicalOperators/VelocityAdvection.hpp"
+#include "QuICC/Base/Typedefs.hpp"
+#include "QuICC/Base/MathConstants.hpp"
+#include "QuICC/Enums/NonDimensional.hpp"
+#include "QuICC/PhysicalOperators/VelocityAdvection.hpp"
 
 namespace QuICC {
 

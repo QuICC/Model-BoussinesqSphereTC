@@ -15,14 +15,14 @@
 
 // Class include
 //
-#include "Model/Boussinesq/Sphere/TC/Momentum.hpp"
+#include "QuICC/Model/Boussinesq/Sphere/TC/Momentum.hpp"
 
 // Project includes
 //
-#include "Base/Typedefs.hpp"
-#include "Base/MathConstants.hpp"
-#include "Enums/NonDimensional.hpp"
-#include "PhysicalOperators/Cross.hpp"
+#include "QuICC/Base/Typedefs.hpp"
+#include "QuICC/Base/MathConstants.hpp"
+#include "QuICC/Enums/NonDimensional.hpp"
+#include "QuICC/PhysicalOperators/Cross.hpp"
 
 namespace QuICC {
 

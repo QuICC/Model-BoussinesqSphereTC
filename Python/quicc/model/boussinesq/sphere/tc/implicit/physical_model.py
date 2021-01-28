@@ -12,7 +12,7 @@ import quicc.base.base_model as base_model
 from quicc.geometry.spherical.sphere_boundary_worland import no_bc
 
 
-class BoussinesqTCSphere(base_model.BaseModel):
+class PhysicalModel(base_model.BaseModel):
     """Class to setup the Boussinesq thermal convection in a sphere with Worland expansion (Toroidal/Poloidal formulation)"""
 
     def periodicity(self):
@@ -231,7 +231,7 @@ class BoussinesqTCSphere(base_model.BaseModel):
         bc = self.convert_bc(eq_params,eigs,bcs,field_row,field_col)
         if field_row == ("velocity","tor"):
             if field_col == ("velocity","tor"):
-                mat = geo.i2lapl(res[0], res[1], m, bc, 1.0, with_sh_coeff = 'laplh', l_zero_fix = 'zero', restriction = restriction)
+                mat = geo.i2lapl(res[0], res[1], m, bc, 1.0, l_zero_fix = 'zero', restriction = restriction)
 
             elif field_col == ("velocity","pol"):
                 mat = geo.zblk(res[0], res[1], m, bc)
@@ -244,10 +244,10 @@ class BoussinesqTCSphere(base_model.BaseModel):
                 mat = geo.zblk(res[0], res[1], m, bc)
 
             elif field_col == ("velocity","pol"):
-                mat = geo.i4lapl2(res[0], res[1], m, bc, 1.0, with_sh_coeff = 'laplh', l_zero_fix = 'zero', restriction = restriction)
+                mat = geo.i4lapl2(res[0], res[1], m, bc, 1.0, l_zero_fix = 'zero', restriction = restriction)
 
             elif field_col == ("temperature",""):
-                mat = geo.i4(res[0], res[1], m, bc, -Ra, with_sh_coeff = 'laplh', l_zero_fix = 'zero', restriction = restriction)
+                mat = geo.i4(res[0], res[1], m, bc, -Ra, l_zero_fix = 'zero', restriction = restriction)
 
         elif field_row == ("temperature",""):
             if field_col == ("velocity","tor"):
@@ -276,10 +276,10 @@ class BoussinesqTCSphere(base_model.BaseModel):
         mat = None
         bc = self.convert_bc(eq_params,eigs,bcs,field_row,field_row)
         if field_row == ("velocity","tor"):
-            mat = geo.i2(res[0], res[1], m, bc, with_sh_coeff = 'laplh', l_zero_fix = 'set', restriction = restriction)
+            mat = geo.i2(res[0], res[1], m, bc, l_zero_fix = 'set', restriction = restriction)
 
         elif field_row == ("velocity","pol"):
-            mat = geo.i4lapl(res[0], res[1], m, bc, with_sh_coeff = 'laplh', l_zero_fix = 'set', restriction = restriction)
+            mat = geo.i4lapl(res[0], res[1], m, bc, l_zero_fix = 'set', restriction = restriction)
 
         elif field_row == ("temperature",""):
             mat = geo.i2(res[0], res[1], m, bc, restriction = restriction)

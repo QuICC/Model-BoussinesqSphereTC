@@ -72,6 +72,9 @@ namespace TC {
       // Set solver timing
       this->setSolveTiming(SolveTiming::PROGNOSTIC);
 
+      // Forward transform generates nonlinear RHS
+      this->setForwardPathsType(FWD_IS_NONLINEAR);
+
       // Get reference to spatial scheme
       const auto& ss = this->ss();
 

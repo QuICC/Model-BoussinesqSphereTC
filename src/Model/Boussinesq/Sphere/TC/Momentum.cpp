@@ -21,6 +21,7 @@
 #include "QuICC/Typedefs.hpp"
 #include "QuICC/Math/Constants.hpp"
 #include "QuICC/PhysicalNames/Velocity.hpp"
+#include "QuICC/SpatialScheme/ISpatialScheme.hpp"
 #include "QuICC/Model/Boussinesq/Sphere/TC/MomentumKernel.hpp"
 
 namespace QuICC {

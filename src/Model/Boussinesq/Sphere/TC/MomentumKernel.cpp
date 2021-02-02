@@ -18,6 +18,7 @@
 
 // Project includes
 //
+#include "QuICC/SpatialScheme/ISpatialScheme.hpp"
 #include "QuICC/PhysicalOperators/Cross.hpp"
 
 namespace QuICC {

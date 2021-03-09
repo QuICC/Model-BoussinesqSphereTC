@@ -247,7 +247,7 @@ class PhysicalModel(base_model.BaseModel):
                 mat = geo.i4lapl2(res[0], res[1], m, bc, 1.0, l_zero_fix = 'zero', restriction = restriction)
 
             elif field_col == ("temperature",""):
-                mat = geo.i4(res[0], res[1], m, bc, -Ra, l_zero_fix = 'zero', restriction = restriction)
+                mat = geo.i4(res[0], res[1], m, bc, -Ra/Pr, l_zero_fix = 'zero', restriction = restriction)
 
         elif field_row == ("temperature",""):
             if field_col == ("velocity","tor"):

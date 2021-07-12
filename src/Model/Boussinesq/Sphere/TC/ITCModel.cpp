@@ -35,6 +35,9 @@
 #include "QuICC/Io/Variable/SphereTorPolEnergyWriter.hpp"
 #include "QuICC/Io/Variable/SphereTorPolLSpectrumWriter.hpp"
 #include "QuICC/Io/Variable/SphereTorPolMSpectrumWriter.hpp"
+#include "QuICC/Io/Variable/SphereTorPolEnstrophyWriter.hpp"
+#include "QuICC/Io/Variable/SphereTorPolEnstrophyLSpectrumWriter.hpp"
+#include "QuICC/Io/Variable/SphereTorPolEnstrophyMSpectrumWriter.hpp"
 #include "QuICC/Generator/States/RandomScalarState.hpp"
 #include "QuICC/Generator/States/RandomVectorState.hpp"
 #include "QuICC/Generator/States/SphereExactStateIds.hpp"
@@ -80,7 +83,7 @@ namespace TC {
          std::pair<Equations::SHMapType::iterator,bool> ptSH;
 
          // Add temperature initial state generator
-         spScalar = spGen->addEquation<Equations::SphereExactScalarState>();
+         spScalar = spGen->addEquation<Equations::SphereExactScalarState>(this->spBackend());
          spScalar->setIdentity(PhysicalNames::Temperature::id());
          switch(0)
          {
@@ -94,7 +97,7 @@ namespace TC {
          }
 
          // Add velocity initial state generator
-         spVector = spGen->addEquation<Equations::SphereExactVectorState>();
+         spVector = spGen->addEquation<Equations::SphereExactVectorState>(this->spBackend());
          spVector->setIdentity(PhysicalNames::Velocity::id());
          switch(2)
          {
@@ -139,13 +142,13 @@ namespace TC {
          Equations::SharedRandomVectorState spVector;
 
          // Add scalar random initial state generator
-         spVector = spGen->addEquation<Equations::RandomVectorState>();
+         spVector = spGen->addEquation<Equations::RandomVectorState>(this->spBackend());
          spVector->setIdentity(PhysicalNames::Velocity::id());
          spVector->setSpectrum(FieldComponents::Spectral::TOR, -1e-2, 1e-2, 1e4, 1e4, 1e4);
          spVector->setSpectrum(FieldComponents::Spectral::POL, -1e-2, 1e-2, 1e4, 1e4, 1e4);
 
          // Add scalar random initial state generator
-         spScalar = spGen->addEquation<Equations::RandomScalarState>();
+         spScalar = spGen->addEquation<Equations::RandomScalarState>(this->spBackend());
          spScalar->setIdentity(PhysicalNames::Temperature::id());
          spScalar->setSpectrum(-1e-2, 1e-2, 1e4, 1e4, 1e4);
       }
@@ -164,12 +167,12 @@ namespace TC {
       Equations::SharedVectorFieldVisualizer spVector;
 
       // Add temperature field visualization
-      spScalar = spVis->addEquation<Equations::ScalarFieldVisualizer>();
+      spScalar = spVis->addEquation<Equations::ScalarFieldVisualizer>(this->spBackend());
       spScalar->setFields(true, true);
       spScalar->setIdentity(PhysicalNames::Temperature::id());
 
       // Add velocity field visualization
-      spVector = spVis->addEquation<Equations::VectorFieldVisualizer>();
+      spVector = spVis->addEquation<Equations::VectorFieldVisualizer>(this->spBackend());
       spVector->setFields(true, false, true);
       spVector->setIdentity(PhysicalNames::Velocity::id());
 
@@ -223,6 +226,23 @@ namespace TC {
       spKineticM->expect(PhysicalNames::Velocity::id());
       //spKineticM->numberOutput();
       spSim->addAsciiOutputFile(spKineticM);
+
+      // Create enstrophy writer
+      auto spEnstrophy = std::make_shared<Io::Variable::SphereTorPolEnstrophyWriter>("kinetic", spSim->ss().tag());
+      spEnstrophy->expect(PhysicalNames::Velocity::id());
+      spSim->addAsciiOutputFile(spEnstrophy);
+
+      // Create enstrophy L spectrum writer
+      auto spEnstrophyL = std::make_shared<Io::Variable::SphereTorPolEnstrophyLSpectrumWriter>("kinetic", spSim->ss().tag());
+      spEnstrophyL->expect(PhysicalNames::Velocity::id());
+      //spEnstrophyL->numberOutput();
+      spSim->addAsciiOutputFile(spEnstrophyL);
+
+      // Create enstrophy M spectrum writer
+      auto spEnstrophyM = std::make_shared<Io::Variable::SphereTorPolEnstrophyMSpectrumWriter>("kinetic", spSim->ss().tag());
+      spEnstrophyM->expect(PhysicalNames::Velocity::id());
+      //spEnstrophyM->numberOutput();
+      spSim->addAsciiOutputFile(spEnstrophyM);
 #endif
    }
 

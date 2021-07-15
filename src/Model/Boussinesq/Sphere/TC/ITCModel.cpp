@@ -73,7 +73,7 @@ namespace TC {
    void ITCModel::addStates(SharedStateGenerator spGen)
    {
       // Generate "exact" solutions (trigonometric or monomial)
-      if(true)
+      if(false)
       {
          // Shared pointer to equation
          Equations::SharedSphereExactScalarState spScalar;
@@ -200,12 +200,14 @@ namespace TC {
       auto spTempL = std::make_shared<Io::Variable::SphereScalarLSpectrumWriter>("temperature", spSim->ss().tag());
       spTempL->expect(PhysicalNames::Temperature::id());
       //spTempL->numberOutput();
+      //spTempL->onlyEvery(5);
       spSim->addAsciiOutputFile(spTempL);
 
       // Create temperature M energy spectrum writer
       auto spTempM = std::make_shared<Io::Variable::SphereScalarMSpectrumWriter>("temperature", spSim->ss().tag());
       spTempM->expect(PhysicalNames::Temperature::id());
       //spTempM->numberOutput();
+      //spTempM->onlyEvery(5);
       spSim->addAsciiOutputFile(spTempM);
 #endif
 
@@ -214,19 +216,23 @@ namespace TC {
       spKinetic->expect(PhysicalNames::Velocity::id());
       spSim->addAsciiOutputFile(spKinetic);
 
-#if 0
+#if 1
       // Create kinetic L energy spectrum writer
       auto spKineticL = std::make_shared<Io::Variable::SphereTorPolLSpectrumWriter>("kinetic", spSim->ss().tag());
       spKineticL->expect(PhysicalNames::Velocity::id());
-      //spKineticL->numberOutput();
+      spKineticL->numberOutput();
+      spKineticL->onlyEvery(5);
       spSim->addAsciiOutputFile(spKineticL);
 
       // Create kinetic M energy spectrum writer
       auto spKineticM = std::make_shared<Io::Variable::SphereTorPolMSpectrumWriter>("kinetic", spSim->ss().tag());
       spKineticM->expect(PhysicalNames::Velocity::id());
-      //spKineticM->numberOutput();
+      spKineticM->numberOutput();
+      spKineticM->onlyEvery(5);
       spSim->addAsciiOutputFile(spKineticM);
+#endif
 
+#if 0
       // Create enstrophy writer
       auto spEnstrophy = std::make_shared<Io::Variable::SphereTorPolEnstrophyWriter>("kinetic", spSim->ss().tag());
       spEnstrophy->expect(PhysicalNames::Velocity::id());
@@ -236,12 +242,14 @@ namespace TC {
       auto spEnstrophyL = std::make_shared<Io::Variable::SphereTorPolEnstrophyLSpectrumWriter>("kinetic", spSim->ss().tag());
       spEnstrophyL->expect(PhysicalNames::Velocity::id());
       //spEnstrophyL->numberOutput();
+      //spEnstrophyL->onlyEvery(5);
       spSim->addAsciiOutputFile(spEnstrophyL);
 
       // Create enstrophy M spectrum writer
       auto spEnstrophyM = std::make_shared<Io::Variable::SphereTorPolEnstrophyMSpectrumWriter>("kinetic", spSim->ss().tag());
       spEnstrophyM->expect(PhysicalNames::Velocity::id());
       //spEnstrophyM->numberOutput();
+      //spEnstrophyM->onlyEvery(5);
       spSim->addAsciiOutputFile(spEnstrophyM);
 #endif
    }

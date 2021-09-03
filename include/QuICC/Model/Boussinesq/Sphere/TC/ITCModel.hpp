@@ -36,7 +36,7 @@ namespace TC {
    /**
     * @brief Implementation of the Boussinesq thermal convection sphere model (Toroidal/Poloidal formulation)
     */
-   class ITCModel: public IPhysicalPyModel
+   class ITCModel: public IPhysicalPyModel<Simulation,StateGenerator,VisualizationGenerator>
    {
       public:
          /**

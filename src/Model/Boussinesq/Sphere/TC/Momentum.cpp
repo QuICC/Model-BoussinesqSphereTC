@@ -21,6 +21,7 @@
 #include "QuICC/Typedefs.hpp"
 #include "QuICC/Math/Constants.hpp"
 #include "QuICC/PhysicalNames/Velocity.hpp"
+#include "QuICC/SolveTiming/Prognostic.hpp"
 #include "QuICC/SpatialScheme/ISpatialScheme.hpp"
 #include "QuICC/Model/Boussinesq/Sphere/TC/MomentumKernel.hpp"
 
@@ -93,7 +94,7 @@ namespace TC {
       this->setName(PhysicalNames::Velocity::id());
 
       // Set solver timing
-      this->setSolveTiming(SolveTiming::PROGNOSTIC);
+      this->setSolveTiming(SolveTiming::Prognostic::id());
 
       // Forward transform generates nonlinear RHS
       this->setForwardPathsType(FWD_IS_NONLINEAR);

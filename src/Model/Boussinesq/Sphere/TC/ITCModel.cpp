@@ -112,7 +112,7 @@ namespace TC {
                std::vector<MHDFloat> ratios = {1e4, 1e4, 1e4};
                spKernel->setRatio(ratios);
                spKernel->init(-1e-2, 1e-2);
-               spScalar->setSrcKernel(FieldComponents::Spectral::SCALAR, spKernel);
+               spScalar->setSrcKernel(spKernel);
             }
             break;
       }

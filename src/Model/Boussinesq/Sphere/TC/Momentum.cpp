@@ -23,6 +23,7 @@
 #include "QuICC/PhysicalNames/Velocity.hpp"
 #include "QuICC/SolveTiming/Prognostic.hpp"
 #include "QuICC/SpatialScheme/ISpatialScheme.hpp"
+#include "QuICC/SpectralKernels/Sphere/ConserveAngularMomentum.hpp"
 #include "QuICC/Model/Boussinesq/Sphere/TC/MomentumKernel.hpp"
 
 namespace QuICC {
@@ -85,6 +86,19 @@ namespace TC {
          spNLKernel->setVelocity(this->name(), this->spUnknown());
          spNLKernel->init(1.0);
          this->mspNLKernel = spNLKernel;
+      }
+   }
+
+   void Momentum::initConstraintKernel()
+   {
+      if(this->bcIds().bcId(this->name()) == 1)
+      {
+         // Initialize the physical kernel
+         auto spConstraint = std::make_shared<Spectral::Kernel::Sphere::ConserveAngularMomentum>(this->ss().has(SpatialScheme::Feature::ComplexSpectrum));
+         spConstraint->setField(this->name(), this->spUnknown());
+         spConstraint->setResolution(this->spRes());
+         spConstraint->init(this->ss().has(SpatialScheme::Feature::SpectralOrdering123));
+         this->setConstraintKernel(FieldComponents::Spectral::TOR, spConstraint);
       }
    }
 

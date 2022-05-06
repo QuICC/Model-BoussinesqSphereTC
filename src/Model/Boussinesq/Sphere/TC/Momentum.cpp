@@ -24,6 +24,8 @@
 #include "QuICC/SolveTiming/Prognostic.hpp"
 #include "QuICC/SpatialScheme/ISpatialScheme.hpp"
 #include "QuICC/SpectralKernels/Sphere/ConserveAngularMomentum.hpp"
+#include "QuICC/Transform/Path/I2CurlNL.hpp"
+#include "QuICC/Transform/Path/I4CurlCurlNL.hpp"
 #include "QuICC/Model/Boussinesq/Sphere/TC/MomentumKernel.hpp"
 
 namespace QuICC {
@@ -71,9 +73,9 @@ namespace TC {
 
    void Momentum::setNLComponents()
    {
-      this->addNLComponent(FieldComponents::Spectral::TOR, 0);
+      this->addNLComponent(FieldComponents::Spectral::TOR, Transform::Path::I2CurlNL::id());
 
-      this->addNLComponent(FieldComponents::Spectral::POL, 0);
+      this->addNLComponent(FieldComponents::Spectral::POL, Transform::Path::I4CurlCurlNL::id());
    }
 
    void Momentum::initNLKernel(const bool force)
@@ -82,9 +84,12 @@ namespace TC {
       if(force || !this->mspNLKernel)
       {
          // Initialize the physical kernel
+         MHDFloat Ra = this->eqParams().nd(NonDimensional::Rayleigh::id());
+         MHDFloat Pr = this->eqParams().nd(NonDimensional::Prandtl::id());
          auto spNLKernel = std::make_shared<Physical::Kernel::MomentumKernel>();
          spNLKernel->setVelocity(this->name(), this->spUnknown());
-         spNLKernel->init(1.0);
+         spNLKernel->setTemperature(PhysicalNames::Temperature::id(), this->spScalar(PhysicalNames::Temperature::id()));
+         spNLKernel->init(1.0, Ra/Pr);
          this->mspNLKernel = spNLKernel;
       }
    }
@@ -121,6 +126,11 @@ namespace TC {
       velReq.enableSpectral();
       velReq.enablePhysical();
       velReq.enableCurl();
+
+      // Add temperature to requirements: is scalar?
+      auto& tempReq = this->mRequirements.addField(PhysicalNames::Temperature::id(), FieldRequirement(true, ss.spectral(), ss.physical()));
+      tempReq.enableSpectral();
+      tempReq.enablePhysical();
    }
 
 }

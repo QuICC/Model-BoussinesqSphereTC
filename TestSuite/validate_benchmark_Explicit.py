@@ -8,7 +8,7 @@ results = []
 
 # Tolerance per max rows
 rows = list(range(0, 101, 10))
-tols = [16, 25, 32, 25, 25, 63, 159, 206, 207, 191, 159]
+tols = [16, 32, 80, 112, 127, 96, 159, 206, 207, 191, 159]
 
 prefixes = ['temperature', 'kinetic']
 prefixes = ['kinetic']

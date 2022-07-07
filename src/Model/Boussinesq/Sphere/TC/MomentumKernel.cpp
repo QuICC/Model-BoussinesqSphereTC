@@ -20,6 +20,7 @@
 //
 #include "QuICC/SpatialScheme/ISpatialScheme.hpp"
 #include "QuICC/PhysicalOperators/Cross.hpp"
+#include "QuICC/PhysicalOperators/SphericalBuoyancy.hpp"
 
 namespace QuICC {
 
@@ -51,10 +52,28 @@ namespace Kernel {
       this->setField(name, spField);
    }
 
-   void MomentumKernel::init(const MHDFloat inertia)
+   void MomentumKernel::setTemperature(std::size_t name, Framework::Selector::VariantSharedScalarVariable spField)
+   {
+      // Safety assertion
+      assert(this->mScalars.count(name) + this->mVectors.count(name) == 0);
+
+      this->mTempName = name;
+
+      this->setField(name, spField);
+   }
+
+   void MomentumKernel::init(const MHDFloat inertia, const MHDFloat buoyancy)
    {
       // Set scaling constants
       this->mInertia = inertia;
+      this->mBuoyancy = buoyancy;
+   }
+
+   void MomentumKernel::setMesh(std::shared_ptr<std::vector<Array> > spMesh)
+   {
+      IPhysicalKernel::setMesh(spMesh);
+
+      this->mRadius = this->mspMesh->at(0);
    }
 
    void MomentumKernel::compute(Framework::Selector::PhysicalScalarField& rNLComp, FieldComponents::Physical::Id id) const
@@ -77,6 +96,9 @@ namespace Kernel {
             assert(false);
             break;
       }
+
+      // Buoyancy
+      std::visit([&](auto&& s){Physical::SphericalBuoyancy::sub(rNLComp, id, s->dom(0).res(), this->mRadius, s->dom(0).phys(), this->mBuoyancy);}, this->scalar(this->mTempName));
    }
 
 }

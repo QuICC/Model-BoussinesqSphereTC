@@ -41,6 +41,7 @@
 #include "QuICC/Io/Variable/SphereTorPolEnstrophyWriter.hpp"
 #include "QuICC/Io/Variable/SphereTorPolEnstrophyLSpectrumWriter.hpp"
 #include "QuICC/Io/Variable/SphereTorPolEnstrophyMSpectrumWriter.hpp"
+#include "QuICC/Io/Variable/SphereMaxAbsoluteFieldValueWriter.hpp"
 #include "QuICC/Generator/States/RandomScalarState.hpp"
 #include "QuICC/Generator/States/RandomVectorState.hpp"
 #include "QuICC/Generator/States/SphereExactScalarState.hpp"
@@ -223,6 +224,7 @@ namespace TC {
       std::map<std::string,std::map<std::string,int> > tags;
       // kinetic
       tags.emplace("kinetic_energy", onOff);
+      tags.emplace("MaxAbsoluteFieldValue", onOff);
       tags.emplace("kinetic_l_spectrum", options);
       tags.emplace("kinetic_m_spectrum", options);
       tags.emplace("kinetic_n_spectrum", options);
@@ -257,6 +259,9 @@ namespace TC {
 
       // Create kinetic energy writer
       this->enableAsciiFile<Io::Variable::SphereTorPolEnergyWriter>("kinetic_energy", "kinetic", PhysicalNames::Velocity::id(), spSim);
+
+      // Create max absolute velocity writer
+      this->enableAsciiFile<Io::Variable::SphereMaxAbsoluteFieldValueWriter>("MaxAbsoluteFieldValue", "", PhysicalNames::Velocity::id(), spSim);
 
       // Create kinetic L energy spectrum writer
       this->enableAsciiFile<Io::Variable::SphereTorPolLSpectrumWriter>("kinetic_l_spectrum", "kinetic", PhysicalNames::Velocity::id(), spSim);

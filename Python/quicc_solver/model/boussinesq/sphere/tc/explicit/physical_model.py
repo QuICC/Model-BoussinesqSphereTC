@@ -277,7 +277,7 @@ class PhysicalModel(base_model.BaseModel):
             mat = geo.i2(res[0], l, bc) - geo.i2(res[0], l, bc)*geo.qid(res[0], l, res[0]-1, {0:0})
 
         elif field_row == ("velocity","pol"):
-            corr = np.genfromtxt('/scratch/snx3000/pmarti/corrections.dat')
+            corr = np.genfromtxt('corrections.dat')
             corr_mat = spsp.csr_matrix((res[0],res[0])).tolil()
             corr_mat[-2,-1] = corr[int(l)]
             corr_mat = corr_mat.tocoo()

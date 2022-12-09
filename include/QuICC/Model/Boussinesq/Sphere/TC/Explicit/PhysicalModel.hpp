@@ -60,6 +60,11 @@ namespace Explicit {
          /// Python script/module name
          virtual std::string PYMODULE() override;
 
+         /**
+          * @brief Initialize specialized backend
+          */
+         virtual void init() override;
+
       protected:
 
       private:

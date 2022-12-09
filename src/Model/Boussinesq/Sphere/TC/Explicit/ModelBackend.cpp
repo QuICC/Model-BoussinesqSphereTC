@@ -199,208 +199,242 @@ namespace Explicit {
       }
    }
 
-   void ModelBackend::modelMatrix(DecoupledZSparse& rModelMatrix, const std::size_t opId, const Equations::CouplingInformation::FieldId_range imRange, const int matIdx, const std::size_t bcType, const Resolution& res, const std::vector<MHDFloat>& eigs, const BcMap& bcs, const NonDimensional::NdMap& nds) const
+   void ModelBackend::implicitBlock(DecoupledZSparse& decMat, const SpectralFieldId& rowId, const SpectralFieldId& colId, const int matIdx, const Resolution& res, const std::vector<MHDFloat>& eigs, const NonDimensional::NdMap& nds) const
    {
       assert(eigs.size() == 1);
       int l = eigs.at(0);
-
-      assert(std::distance(imRange.first, imRange.second) == 1);
-      auto fieldId = imRange.first->first;
-      auto compId = imRange.first->second;
 
       auto nN = res.counter().dimensions(Dimensions::Space::SPECTRAL, eigs.at(0))(0);
 
       auto a = Polynomial::Worland::WorlandBase::ALPHA_CHEBYSHEV;
       auto b = Polynomial::Worland::WorlandBase::DBETA_CHEBYSHEV;
 
+      if(rowId == std::make_pair(PhysicalNames::Velocity::id(),FieldComponents::Spectral::TOR) && rowId == colId)
+      {
+         SparseSM::Worland::I2Lapl spasm(nN, nN, a, b, l);
+         decMat.real() = spasm.mat();
+      }
+      else if(rowId == std::make_pair(PhysicalNames::Velocity::id(),FieldComponents::Spectral::POL) && rowId == colId)
+      {
+         SparseSM::Worland::I4Lapl2 spasm(nN, nN, a, b, l);
+         decMat.real() = spasm.mat();
+      }
+      else if(rowId == std::make_pair(PhysicalNames::Temperature::id(), FieldComponents::Spectral::SCALAR) && rowId == colId)
+      {
+         SparseSM::Worland::I2Lapl spasm(nN, nN, a, b, l);
+         decMat.real() = spasm.mat();
+      }
+      else
+      {
+         throw std::logic_error("Equations are not setup properly");
+      }
+   }
+
+   void ModelBackend::timeBlock(DecoupledZSparse& decMat, const SpectralFieldId& fieldId, const int matIdx, const Resolution& res, const std::vector<MHDFloat>& eigs, const NonDimensional::NdMap& nds) const
+   {
+      assert(eigs.size() == 1);
+      int l = eigs.at(0);
+
+      auto nN = res.counter().dimensions(Dimensions::Space::SPECTRAL, eigs.at(0))(0);
+
+      auto a = Polynomial::Worland::WorlandBase::ALPHA_CHEBYSHEV;
+      auto b = Polynomial::Worland::WorlandBase::DBETA_CHEBYSHEV;
+
+      if(fieldId == std::make_pair(PhysicalNames::Velocity::id(),FieldComponents::Spectral::TOR))
+      {
+         SparseSM::Worland::I2 spasm(nN, nN, a, b, l);
+         decMat.real() = spasm.mat();
+      }
+      else if(fieldId == std::make_pair(PhysicalNames::Velocity::id(),FieldComponents::Spectral::POL))
+      {
+         SparseSM::Worland::I4Lapl spasm(nN, nN, a, b, l);
+         decMat.real() = spasm.mat();
+      }
+      else if(fieldId == std::make_pair(PhysicalNames::Temperature::id(), FieldComponents::Spectral::SCALAR))
+      {
+         auto Pr = nds.find(NonDimensional::Prandtl::id())->second->value();
+         SparseSM::Worland::I2 spasm(nN, nN, a, b, l);
+         decMat.real() = Pr*spasm.mat();
+      }
+   }
+
+   void ModelBackend::applyGalerkinStencil(DecoupledZSparse& decMat, const SpectralFieldId& rowId, const SpectralFieldId& colId, const int matIdx, const Resolution& res, const std::vector<MHDFloat>& eigs, const BcMap& bcs, const NonDimensional::NdMap& nds) const
+   {
+      assert(eigs.size() == 1);
+      int l = eigs.at(0);
+
+      auto nN = res.counter().dimensions(Dimensions::Space::SPECTRAL, eigs.at(0))(0);
+
+      auto a = Polynomial::Worland::WorlandBase::ALPHA_CHEBYSHEV;
+      auto b = Polynomial::Worland::WorlandBase::DBETA_CHEBYSHEV;
+
+      auto stencil = decMat.real();
+      this->galerkinStencil(stencil, colId, matIdx, res, eigs, false, bcs, nds);
+
+      auto s = stencil.rows() - stencil.cols();
+      SparseSM::Worland::Id qId(nN-s, nN, a, b, l, 0, s);
+      decMat.real() = qId.mat()*(decMat.real()*stencil);
+   }
+
+   void ModelBackend::applyTau(DecoupledZSparse& decMat, const SpectralFieldId& rowId, const SpectralFieldId& colId, const int matIdx, const Resolution& res, const std::vector<MHDFloat>& eigs, const BcMap& bcs, const NonDimensional::NdMap& nds) const
+   {
+      assert(eigs.size() == 1);
+      int l = eigs.at(0);
+
+      auto nN = res.counter().dimensions(Dimensions::Space::SPECTRAL, eigs.at(0))(0);
+
+      auto a = Polynomial::Worland::WorlandBase::ALPHA_CHEBYSHEV;
+      auto b = Polynomial::Worland::WorlandBase::DBETA_CHEBYSHEV;
+
+      auto bcId = bcs.find(PhysicalNames::Coordinator::tag(rowId.first))->second;
+
+      SparseSM::Worland::Boundary::Operator bcOp(nN, nN, a, b, l);
+
+      if(rowId == std::make_pair(PhysicalNames::Velocity::id(), FieldComponents::Spectral::TOR) && rowId == colId)
+      {
+         if(bcId == 0)
+         {
+            bcOp.addRow<SparseSM::Worland::Boundary::Value>();
+         }
+         else if(bcId == 1)
+         {
+            bcOp.addRow<SparseSM::Worland::Boundary::R1D1DivR1>();
+         }
+         else
+         {
+            throw std::logic_error("Boundary conditions for Temperature not implemented");
+         }
+      }
+      else if(rowId == std::make_pair(PhysicalNames::Velocity::id(), FieldComponents::Spectral::POL) && rowId == colId)
+      {
+         if(bcId == 0)
+         {
+            bcOp.addRow<SparseSM::Worland::Boundary::Value>();
+            bcOp.addRow<SparseSM::Worland::Boundary::D1>();
+         }
+         else if(bcId == 1)
+         {
+            bcOp.addRow<SparseSM::Worland::Boundary::Value>();
+            bcOp.addRow<SparseSM::Worland::Boundary::D2>();
+         }
+         else
+         {
+            throw std::logic_error("Boundary conditions for Temperature not implemented");
+         }
+      }
+      else if(rowId == std::make_pair(PhysicalNames::Temperature::id(), FieldComponents::Spectral::SCALAR) && rowId == colId)
+      {
+         if(bcId == 0)
+         {
+            bcOp.addRow<SparseSM::Worland::Boundary::Value>();
+         }
+         else if(bcId == 1)
+         {
+            bcOp.addRow<SparseSM::Worland::Boundary::D1>();
+         }
+         else
+         {
+            throw std::logic_error("Boundary conditions for Temperature not implemented");
+         }
+      }
+
+      decMat.real() += bcOp.mat();
+   }
+
+   void ModelBackend::modelMatrix(DecoupledZSparse& rModelMatrix, const std::size_t opId, const Equations::CouplingInformation::FieldId_range imRange, const int matIdx, const std::size_t bcType, const Resolution& res, const std::vector<MHDFloat>& eigs, const BcMap& bcs, const NonDimensional::NdMap& nds) const
+   {
+
       // Time operator
       if(opId == ModelOperator::Time::id())
       {
-         if(fieldId == PhysicalNames::Velocity::id() && compId == FieldComponents::Spectral::TOR)
+         bool needStencil = (this->mUseGalerkin && bcType == ModelOperatorBoundary::SolverNoTau::id());
+         bool needTau = bcType == ModelOperatorBoundary::SolverHasBc::id();
+
+         for(auto pRowId = imRange.first; pRowId != imRange.second; pRowId++)
          {
-            SparseSM::Worland::I2 spasm(nN, nN, a, b, l);
-            rModelMatrix.real() = spasm.mat();
-         }
-         else if(fieldId == PhysicalNames::Velocity::id() && compId == FieldComponents::Spectral::POL)
-         {
-            SparseSM::Worland::I4Lapl spasm(nN, nN, a, b, l);
-            rModelMatrix.real() = spasm.mat();
-         }
-         else if(fieldId == PhysicalNames::Temperature::id() && compId == FieldComponents::Spectral::SCALAR)
-         {
-            auto Pr = nds.find(NonDimensional::Prandtl::id())->second->value();
-            SparseSM::Worland::I2 spasm(nN, nN, a, b, l);
-            rModelMatrix.real() = Pr*spasm.mat();
+            this->timeBlock(rModelMatrix, *pRowId, matIdx, res, eigs, nds);
+
+            // Apply boundary condition
+            if(needStencil)
+            {
+               this->applyGalerkinStencil(rModelMatrix, *pRowId, *pRowId, matIdx, res, eigs, bcs, nds);
+            }
+            else if(needTau)
+            {
+               this->applyTau(rModelMatrix, *pRowId, *pRowId, matIdx, res, eigs, bcs, nds);
+            }
          }
       }
       // Linear operator
       else if(opId == ModelOperator::ImplicitLinear::id())
       {
-         if(fieldId == PhysicalNames::Velocity::id() && compId == FieldComponents::Spectral::TOR)
+         bool needStencil = (this->mUseGalerkin && bcType == ModelOperatorBoundary::SolverNoTau::id());
+         bool needTau = bcType == ModelOperatorBoundary::SolverHasBc::id();
+
+         for(auto pRowId = imRange.first; pRowId != imRange.second; pRowId++)
          {
-            SparseSM::Worland::I2Lapl spasm(nN, nN, a, b, l);
-            rModelMatrix.real() = spasm.mat();
-         }
-         else if(fieldId == PhysicalNames::Velocity::id() && compId == FieldComponents::Spectral::POL)
-         {
-            SparseSM::Worland::I4Lapl2 spasm(nN, nN, a, b, l);
-            rModelMatrix.real() = spasm.mat();
-         }
-         else if(fieldId == PhysicalNames::Temperature::id() && compId == FieldComponents::Spectral::SCALAR)
-         {
-            SparseSM::Worland::I2Lapl spasm(nN, nN, a, b, l);
-            rModelMatrix.real() = spasm.mat();
+            for(auto pColId = imRange.first; pColId != imRange.second; pColId++)
+            {
+               this->implicitBlock(rModelMatrix, *pRowId, *pColId, matIdx, res, eigs, nds);
+
+               // Apply boundary condition
+               if(needStencil)
+               {
+                  this->applyGalerkinStencil(rModelMatrix, *pRowId, *pColId, matIdx, res, eigs, bcs, nds);
+               }
+               else if(needTau)
+               {
+                  this->applyTau(rModelMatrix, *pRowId, *pColId, matIdx, res, eigs, bcs, nds);
+               }
+            }
          }
       }
       // Boundary operator
       else if(opId == ModelOperator::Boundary::id())
       {
-         rModelMatrix.real().resize(nN, nN);
+         bool needStencil = this->mUseGalerkin;
+         bool needTau = (bcType == ModelOperatorBoundary::SolverHasBc::id());
+
+         auto nN = res.counter().dimensions(Dimensions::Space::SPECTRAL, eigs.at(0))(0);
+
+         for(auto pRowId = imRange.first; pRowId != imRange.second; pRowId++)
+         {
+            for(auto pColId = imRange.first; pColId != imRange.second; pColId++)
+            {
+               rModelMatrix.real().resize(nN, nN);
+
+               // Apply boundary condition
+               if(needStencil)
+               {
+                  this->applyGalerkinStencil(rModelMatrix, *pRowId, *pColId, matIdx, res, eigs, bcs, nds);
+               }
+               else if(needTau)
+               {
+                  this->applyTau(rModelMatrix, *pRowId, *pColId, matIdx, res, eigs, bcs, nds);
+               }
+            }
+         }
       }
       else
       {
          throw std::logic_error("Requested operator type is not implemented");
       }
-
-      if((this->mUseGalerkin && bcType == ModelOperatorBoundary::SolverNoTau::id()) || (this->mUseGalerkin && opId == ModelOperator::Boundary::id()))
-      {
-         auto bcId = bcs.find(PhysicalNames::Coordinator::tag(fieldId))->second;
-         auto stencil = rModelMatrix.real(); 
-
-         int s = 0;
-         if(fieldId == PhysicalNames::Velocity::id() && compId == FieldComponents::Spectral::TOR)
-         {
-            s = 1;
-            if(bcId == 0)
-            {
-               SparseSM::Worland::Stencil::Value bc(nN, nN-1, a, b, l);
-               stencil = bc.mat(); 
-            }
-            else if(bcId == 1)
-            {
-               SparseSM::Worland::Stencil::R1D1DivR1 bc(nN, nN-1, a, b, l);
-               stencil = bc.mat(); 
-            }
-            else
-            {
-               throw std::logic_error("Boundary conditions for Temperature not implemented");
-            }
-         }
-         else if(fieldId == PhysicalNames::Velocity::id() && compId == FieldComponents::Spectral::POL)
-         {
-            s = 2;
-            if(bcId == 0)
-            {
-               SparseSM::Worland::Stencil::ValueD1 bc(nN, nN-2, a, b, l);
-               stencil = bc.mat(); 
-            }
-            else if(bcId == 1)
-            {
-               SparseSM::Worland::Stencil::ValueD2 bc(nN, nN-2, a, b, l);
-               stencil = bc.mat(); 
-            }
-            else
-            {
-               throw std::logic_error("Boundary conditions for Temperature not implemented");
-            }
-         }
-         else if(fieldId == PhysicalNames::Temperature::id() && compId == FieldComponents::Spectral::SCALAR)
-         {
-            s = 1;
-            if(bcId == 0)
-            {
-               SparseSM::Worland::Stencil::Value bc(nN, nN-1, a, b, l);
-               stencil = bc.mat(); 
-            }
-            else if(bcId == 1)
-            {
-               SparseSM::Worland::Stencil::D1 bc(nN, nN-1, a, b, l);
-               stencil = bc.mat(); 
-            }
-            else
-            {
-               throw std::logic_error("Boundary conditions for Temperature not implemented");
-            }
-         }
-
-         SparseSM::Worland::Id qId(nN-s, nN, a, b, l, 0, s);
-         rModelMatrix.real() = qId.mat()*(rModelMatrix.real()*stencil);
-      }
-      else if(bcType == ModelOperatorBoundary::SolverHasBc::id())
-      {
-         auto bcId = bcs.find(PhysicalNames::Coordinator::tag(fieldId))->second;
-
-         SparseSM::Worland::Boundary::Operator bcOp(nN, nN, a, b, l);
-
-         if(fieldId == PhysicalNames::Velocity::id() && compId == FieldComponents::Spectral::TOR)
-         {
-            if(bcId == 0)
-            {
-               bcOp.addRow<SparseSM::Worland::Boundary::Value>();
-            }
-            else if(bcId == 1)
-            {
-               bcOp.addRow<SparseSM::Worland::Boundary::R1D1DivR1>();
-            }
-            else
-            {
-               throw std::logic_error("Boundary conditions for Temperature not implemented");
-            }
-         }
-         else if(fieldId == PhysicalNames::Velocity::id() && compId == FieldComponents::Spectral::POL)
-         {
-            if(bcId == 0)
-            {
-               bcOp.addRow<SparseSM::Worland::Boundary::Value>();
-               bcOp.addRow<SparseSM::Worland::Boundary::D1>();
-            }
-            else if(bcId == 1)
-            {
-               bcOp.addRow<SparseSM::Worland::Boundary::Value>();
-               bcOp.addRow<SparseSM::Worland::Boundary::D2>();
-            }
-            else
-            {
-               throw std::logic_error("Boundary conditions for Temperature not implemented");
-            }
-         }
-         else if(fieldId == PhysicalNames::Temperature::id() && compId == FieldComponents::Spectral::SCALAR)
-         {
-            if(bcId == 0)
-            {
-               bcOp.addRow<SparseSM::Worland::Boundary::Value>();
-            }
-            else if(bcId == 1)
-            {
-               bcOp.addRow<SparseSM::Worland::Boundary::D1>();
-            }
-            else
-            {
-               throw std::logic_error("Boundary conditions for Temperature not implemented");
-            }
-         }
-
-         rModelMatrix.real() += bcOp.mat();
-      }
    }
 
-   void ModelBackend::galerkinStencil(SparseMatrix& mat, const SpectralFieldId& fId, const int matIdx, const Resolution& res, const std::vector<MHDFloat>& eigs, const bool makeSquare, const BcMap& bcs, const NonDimensional::NdMap& nds) const
+   void ModelBackend::galerkinStencil(SparseMatrix& mat, const SpectralFieldId& fieldId, const int matIdx, const Resolution& res, const std::vector<MHDFloat>& eigs, const bool makeSquare, const BcMap& bcs, const NonDimensional::NdMap& nds) const
    {
       assert(eigs.size() == 1);
       int l = eigs.at(0);
-
-      auto fieldId = fId.first;
-      auto compId = fId.second;
-
-      auto bcId = bcs.find(PhysicalNames::Coordinator::tag(fieldId))->second;
 
       auto nN = res.counter().dimensions(Dimensions::Space::SPECTRAL, eigs.at(0))(0);
 
       auto a = Polynomial::Worland::WorlandBase::ALPHA_CHEBYSHEV;
       auto b = Polynomial::Worland::WorlandBase::DBETA_CHEBYSHEV;
 
+      auto bcId = bcs.find(PhysicalNames::Coordinator::tag(fieldId.first))->second;
+
       int s = 0;
-      if(fieldId == PhysicalNames::Velocity::id() && compId == FieldComponents::Spectral::TOR)
+      if(fieldId == std::make_pair(PhysicalNames::Velocity::id(), FieldComponents::Spectral::TOR))
       {
          s = 1;
          if(bcId == 0)
@@ -418,7 +452,7 @@ namespace Explicit {
             throw std::logic_error("Boundary conditions for Temperature not implemented");
          }
       }
-      else if(fieldId == PhysicalNames::Velocity::id() && compId == FieldComponents::Spectral::POL)
+      else if(fieldId == std::make_pair(PhysicalNames::Velocity::id(), FieldComponents::Spectral::POL))
       {
          s = 2;
          if(bcId == 0)
@@ -436,7 +470,7 @@ namespace Explicit {
             throw std::logic_error("Boundary conditions for Temperature not implemented");
          }
       }
-      else if(fieldId == PhysicalNames::Temperature::id() && compId == FieldComponents::Spectral::SCALAR)
+      else if(fieldId == std::make_pair(PhysicalNames::Temperature::id(), FieldComponents::Spectral::SCALAR))
       {
          s = 1;
          if(bcId == 0)

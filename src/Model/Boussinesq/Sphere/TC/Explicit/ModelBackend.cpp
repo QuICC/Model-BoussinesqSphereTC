@@ -22,7 +22,10 @@
 #include "QuICC/ModelOperatorBoundary/SolverNoTau.hpp"
 #include "QuICC/ModelOperatorBoundary/Stencil.hpp"
 #include "QuICC/Enums/FieldIds.hpp"
-#include "QuICC/PhysicalNames/Coordinator.hpp"
+#include "QuICC/Bc/Name/FixedTemperature.hpp"
+#include "QuICC/Bc/Name/FixedFlux.hpp"
+#include "QuICC/Bc/Name/StressFree.hpp"
+#include "QuICC/Bc/Name/NoSlip.hpp"
 #include "QuICC/PhysicalNames/Velocity.hpp"
 #include "QuICC/PhysicalNames/Temperature.hpp"
 #include "QuICC/NonDimensional/Prandtl.hpp"
@@ -286,55 +289,55 @@ namespace Explicit {
       auto a = Polynomial::Worland::WorlandBase::ALPHA_CHEBYSHEV;
       auto b = Polynomial::Worland::WorlandBase::DBETA_CHEBYSHEV;
 
-      auto bcId = bcs.find(PhysicalNames::Coordinator::tag(rowId.first))->second;
+      auto bcId = bcs.find(rowId.first)->second;
 
       SparseSM::Worland::Boundary::Operator bcOp(nN, nN, a, b, l);
 
       if(rowId == std::make_pair(PhysicalNames::Velocity::id(), FieldComponents::Spectral::TOR) && rowId == colId)
       {
-         if(bcId == 0)
+         if(bcId == Bc::Name::NoSlip::id())
          {
             bcOp.addRow<SparseSM::Worland::Boundary::Value>();
          }
-         else if(bcId == 1)
+         else if(bcId == Bc::Name::StressFree::id())
          {
             bcOp.addRow<SparseSM::Worland::Boundary::R1D1DivR1>();
          }
          else
          {
-            throw std::logic_error("Boundary conditions for Temperature not implemented");
+            throw std::logic_error("Boundary conditions for Velocity Toroidal component not implemented");
          }
       }
       else if(rowId == std::make_pair(PhysicalNames::Velocity::id(), FieldComponents::Spectral::POL) && rowId == colId)
       {
-         if(bcId == 0)
+         if(bcId == Bc::Name::NoSlip::id())
          {
             bcOp.addRow<SparseSM::Worland::Boundary::Value>();
             bcOp.addRow<SparseSM::Worland::Boundary::D1>();
          }
-         else if(bcId == 1)
+         else if(bcId == Bc::Name::StressFree::id())
          {
             bcOp.addRow<SparseSM::Worland::Boundary::Value>();
             bcOp.addRow<SparseSM::Worland::Boundary::D2>();
          }
          else
          {
-            throw std::logic_error("Boundary conditions for Temperature not implemented");
+            throw std::logic_error("Boundary conditions for Velocity Poloidal component not implemented");
          }
       }
       else if(rowId == std::make_pair(PhysicalNames::Temperature::id(), FieldComponents::Spectral::SCALAR) && rowId == colId)
       {
-         if(bcId == 0)
+         if(bcId == Bc::Name::FixedTemperature::id())
          {
             bcOp.addRow<SparseSM::Worland::Boundary::Value>();
          }
-         else if(bcId == 1)
+         else if(bcId == Bc::Name::FixedFlux::id())
          {
             bcOp.addRow<SparseSM::Worland::Boundary::D1>();
          }
          else
          {
-            throw std::logic_error("Boundary conditions for Temperature not implemented");
+            throw std::logic_error("Boundary conditions for Temperature not implemented (" + std::to_string(bcId) + ")");
          }
       }
 
@@ -431,61 +434,61 @@ namespace Explicit {
       auto a = Polynomial::Worland::WorlandBase::ALPHA_CHEBYSHEV;
       auto b = Polynomial::Worland::WorlandBase::DBETA_CHEBYSHEV;
 
-      auto bcId = bcs.find(PhysicalNames::Coordinator::tag(fieldId.first))->second;
+      auto bcId = bcs.find(fieldId.first)->second;
 
       int s = 0;
       if(fieldId == std::make_pair(PhysicalNames::Velocity::id(), FieldComponents::Spectral::TOR))
       {
          s = 1;
-         if(bcId == 0)
+         if(bcId == Bc::Name::NoSlip::id())
          {
             SparseSM::Worland::Stencil::Value bc(nN, nN-1, a, b, l);
             mat = bc.mat(); 
          }
-         else if(bcId == 1)
+         else if(bcId == Bc::Name::StressFree::id())
          {
             SparseSM::Worland::Stencil::R1D1DivR1 bc(nN, nN-1, a, b, l);
             mat = bc.mat(); 
          }
          else
          {
-            throw std::logic_error("Boundary conditions for Temperature not implemented");
+            throw std::logic_error("Galerkin boundary conditions for Velocity Toroidal component not implemented");
          }
       }
       else if(fieldId == std::make_pair(PhysicalNames::Velocity::id(), FieldComponents::Spectral::POL))
       {
          s = 2;
-         if(bcId == 0)
+         if(bcId == Bc::Name::NoSlip::id())
          {
             SparseSM::Worland::Stencil::ValueD1 bc(nN, nN-2, a, b, l);
             mat = bc.mat(); 
          }
-         else if(bcId == 1)
+         else if(bcId == Bc::Name::StressFree::id())
          {
             SparseSM::Worland::Stencil::ValueD2 bc(nN, nN-2, a, b, l);
             mat = bc.mat(); 
          }
          else
          {
-            throw std::logic_error("Boundary conditions for Temperature not implemented");
+            throw std::logic_error("Galerin boundary conditions for Velocity Poloidal component not implemented");
          }
       }
       else if(fieldId == std::make_pair(PhysicalNames::Temperature::id(), FieldComponents::Spectral::SCALAR))
       {
          s = 1;
-         if(bcId == 0)
+         if(bcId == Bc::Name::FixedTemperature::id())
          {
             SparseSM::Worland::Stencil::Value bc(nN, nN-1, a, b, l);
             mat = bc.mat(); 
          }
-         else if(bcId == 1)
+         else if(bcId == Bc::Name::FixedFlux::id())
          {
             SparseSM::Worland::Stencil::D1 bc(nN, nN-1, a, b, l);
             mat = bc.mat(); 
          }
          else
          {
-            throw std::logic_error("Boundary conditions for Temperature not implemented");
+            throw std::logic_error("Galerkin boundary conditions for Temperature not implemented");
          }
       }
 

@@ -220,17 +220,17 @@ namespace Explicit {
 
       if(rowId == std::make_pair(PhysicalNames::Velocity::id(),FieldComponents::Spectral::TOR) && rowId == colId)
       {
-         SparseSM::Worland::I2Lapl spasm(nN, nN, a, b, l);
+         SparseSM::Worland::I2Lapl spasm(nN, nN, a, b, l, 1);
          decMat.real() = spasm.mat();
       }
       else if(rowId == std::make_pair(PhysicalNames::Velocity::id(),FieldComponents::Spectral::POL) && rowId == colId)
       {
-         SparseSM::Worland::I4Lapl2 spasm(nN, nN, a, b, l);
+         SparseSM::Worland::I4Lapl2 spasm(nN, nN, a, b, l, 2);
          decMat.real() = spasm.mat();
       }
       else if(rowId == std::make_pair(PhysicalNames::Temperature::id(), FieldComponents::Spectral::SCALAR) && rowId == colId)
       {
-         SparseSM::Worland::I2Lapl spasm(nN, nN, a, b, l);
+         SparseSM::Worland::I2Lapl spasm(nN, nN, a, b, l, 1);
          decMat.real() = spasm.mat();
       }
       else
@@ -251,18 +251,18 @@ namespace Explicit {
 
       if(fieldId == std::make_pair(PhysicalNames::Velocity::id(),FieldComponents::Spectral::TOR))
       {
-         SparseSM::Worland::I2 spasm(nN, nN, a, b, l);
+         SparseSM::Worland::I2 spasm(nN, nN, a, b, l, 1);
          decMat.real() = spasm.mat();
       }
       else if(fieldId == std::make_pair(PhysicalNames::Velocity::id(),FieldComponents::Spectral::POL))
       {
-         SparseSM::Worland::I4Lapl spasm(nN, nN, a, b, l);
+         SparseSM::Worland::I4Lapl spasm(nN, nN, a, b, l, 2);
          decMat.real() = spasm.mat();
       }
       else if(fieldId == std::make_pair(PhysicalNames::Temperature::id(), FieldComponents::Spectral::SCALAR))
       {
          auto Pr = nds.find(NonDimensional::Prandtl::id())->second->value();
-         SparseSM::Worland::I2 spasm(nN, nN, a, b, l);
+         SparseSM::Worland::I2 spasm(nN, nN, a, b, l, 2);
          decMat.real() = Pr*spasm.mat();
       }
    }

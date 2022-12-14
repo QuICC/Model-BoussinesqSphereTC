@@ -1,4 +1,4 @@
-/** 
+/**
  * @file ModelBackend.cpp
  * @brief Source of the interface for model backend
  */
@@ -26,6 +26,7 @@
 #include "QuICC/Bc/Name/FixedFlux.hpp"
 #include "QuICC/Bc/Name/StressFree.hpp"
 #include "QuICC/Bc/Name/NoSlip.hpp"
+#include "QuICC/NonDimensional/Rayleigh.hpp"
 #include "QuICC/PhysicalNames/Velocity.hpp"
 #include "QuICC/PhysicalNames/Temperature.hpp"
 #include "QuICC/NonDimensional/Prandtl.hpp"
@@ -63,21 +64,27 @@ namespace TC {
 
 namespace Explicit {
 
-   ModelBackend::ModelBackend(const std::string pyModule, const std::string pyClass)
-      : PyModelBackend(pyModule, pyClass), mUseGalerkin(false)
+   ModelBackend::ModelBackend()
+      : IModelBackend(), mUseGalerkin(false)
    {
    }
 
    std::vector<std::string> ModelBackend::fieldNames() const
    {
-      std::vector<std::string> names = {"velocity", "temperature"};
+      std::vector<std::string> names = {
+         PhysicalNames::Velocity().tag(),
+         PhysicalNames::Temperature().tag()
+      };
 
       return names;
    }
 
    std::vector<std::string> ModelBackend::paramNames() const
    {
-      std::vector<std::string> names = {"prandtl", "rayleigh"};
+      std::vector<std::string> names = {
+         NonDimensional::Prandtl().tag(),
+         NonDimensional::Rayleigh().tag()
+      };
 
       return names;
    }
@@ -92,7 +99,6 @@ namespace Explicit {
    void ModelBackend::enableGalerkin(const bool flag)
    {
       this->mUseGalerkin = flag;
-      this->mpWrapper->enableGalerkin(flag);
    }
 
    std::map<std::string,MHDFloat> ModelBackend::automaticParameters(const std::map<std::string,MHDFloat>& cfg) const
@@ -170,7 +176,7 @@ namespace Explicit {
 
    void ModelBackend::operatorInfo(ArrayI& tauN, ArrayI& galN, MatrixI& galShift, ArrayI& rhsCols, ArrayI& sysN, const SpectralFieldId& fId, const Resolution& res, const Equations::Tools::ICoupling& coupling, const BcMap& bcs) const
    {
-      // Loop overall matrices/eigs 
+      // Loop overall matrices/eigs
       for(int idx = 0; idx < tauN.size(); ++idx)
       {
          auto eigs = coupling.getIndexes(res, idx);
@@ -443,12 +449,12 @@ namespace Explicit {
          if(bcId == Bc::Name::NoSlip::id())
          {
             SparseSM::Worland::Stencil::Value bc(nN, nN-1, a, b, l);
-            mat = bc.mat(); 
+            mat = bc.mat();
          }
          else if(bcId == Bc::Name::StressFree::id())
          {
             SparseSM::Worland::Stencil::R1D1DivR1 bc(nN, nN-1, a, b, l);
-            mat = bc.mat(); 
+            mat = bc.mat();
          }
          else
          {
@@ -461,12 +467,12 @@ namespace Explicit {
          if(bcId == Bc::Name::NoSlip::id())
          {
             SparseSM::Worland::Stencil::ValueD1 bc(nN, nN-2, a, b, l);
-            mat = bc.mat(); 
+            mat = bc.mat();
          }
          else if(bcId == Bc::Name::StressFree::id())
          {
             SparseSM::Worland::Stencil::ValueD2 bc(nN, nN-2, a, b, l);
-            mat = bc.mat(); 
+            mat = bc.mat();
          }
          else
          {
@@ -479,12 +485,12 @@ namespace Explicit {
          if(bcId == Bc::Name::FixedTemperature::id())
          {
             SparseSM::Worland::Stencil::Value bc(nN, nN-1, a, b, l);
-            mat = bc.mat(); 
+            mat = bc.mat();
          }
          else if(bcId == Bc::Name::FixedFlux::id())
          {
             SparseSM::Worland::Stencil::D1 bc(nN, nN-1, a, b, l);
-            mat = bc.mat(); 
+            mat = bc.mat();
          }
          else
          {

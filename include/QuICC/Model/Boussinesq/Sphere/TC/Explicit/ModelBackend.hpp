@@ -1,6 +1,6 @@
-/** 
+/**
  * @file ModelBackend.hpp
- * @brief Model backend 
+ * @brief Model backend
  */
 
 #ifndef QUICC_MODEL_BOUSSINESQ_SPHERE_TC_EXPLICIT_MODELBACKEND_HPP
@@ -21,7 +21,7 @@
 
 // Project includes
 //
-#include "QuICC/Model/PyModelBackend.hpp"
+#include "QuICC/Model/IModelBackend.hpp"
 
 namespace QuICC {
 
@@ -38,13 +38,13 @@ namespace Explicit {
    /**
     * @brief Interface for model backend
     */
-   class ModelBackend: public PyModelBackend
+   class ModelBackend: public IModelBackend
    {
       public:
          /**
           * @brief Constructor
           */
-         ModelBackend(const std::string pyModule, const std::string pyClass);
+         ModelBackend();
 
          /**
           * @brief Destructor

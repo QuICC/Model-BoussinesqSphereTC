@@ -50,5 +50,5 @@ marginal_options['show_spectra'] = True
 marginal_options['show_physical'] = True
 marginal_options['curve_points'] = np.arange(max(1, l-10), l+11, 1)
 
-# Compute 
+# Compute
 MarginalCurve.compute(gevp_opts, marginal_options)

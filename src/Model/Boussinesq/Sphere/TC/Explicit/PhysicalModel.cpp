@@ -16,6 +16,7 @@
 //
 #include "QuICC/Model/Boussinesq/Sphere/TC/Explicit/PhysicalModel.hpp"
 #include "QuICC/Model/Boussinesq/Sphere/TC/Explicit/ModelBackend.hpp"
+#include "QuICC/Model/PyModelBackend.hpp"
 
 // Project includes
 //
@@ -39,9 +40,15 @@ namespace Explicit {
 
    void PhysicalModel::init()
    {
+#if 0
       IPhysicalPyModel<Simulation,StateGenerator,VisualizationGenerator>::init();
 
-      this->mpBackend = std::make_shared<ModelBackend>(this->PYMODULE(), this->PYCLASS());
+      this->mpBackend = std::make_shared<PyModelBackend>(this->PYMODULE(), this->PYCLASS());
+#else
+      IPhysicalModel<Simulation,StateGenerator,VisualizationGenerator>::init();
+
+      this->mpBackend = std::make_shared<ModelBackend>();
+#endif
    }
 
 }

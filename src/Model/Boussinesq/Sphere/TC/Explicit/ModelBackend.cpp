@@ -262,7 +262,7 @@ namespace Explicit {
       else if(fieldId == std::make_pair(PhysicalNames::Temperature::id(), FieldComponents::Spectral::SCALAR))
       {
          auto Pr = nds.find(NonDimensional::Prandtl::id())->second->value();
-         SparseSM::Worland::I2 spasm(nN, nN, a, b, l, 2);
+         SparseSM::Worland::I2 spasm(nN, nN, a, b, l, 1);
          decMat.real() = Pr*spasm.mat();
       }
    }

@@ -3,23 +3,17 @@
  * @brief Source of the Boussinesq thermal convection in a sphere (Toroidal/Poloidal formulation) without coupled solve (standard implementation)
  */
 
-// Configuration includes
-//
-
 // System includes
 //
 
-// External includes
-//
-
 // Class include
-//
+// Project includes
 #include "QuICC/Model/Boussinesq/Sphere/TC/Explicit/PhysicalModel.hpp"
 #include "QuICC/Model/Boussinesq/Sphere/TC/Explicit/ModelBackend.hpp"
 #include "QuICC/Model/PyModelBackend.hpp"
 
-// Project includes
-//
+// Force use of C++ backend
+#define QUICC_MODEL_BOUSSINESQSPHERETC_EXPLICIT_BACKEND_CPP
 
 namespace QuICC {
 

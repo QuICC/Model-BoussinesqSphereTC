@@ -6,7 +6,6 @@
 // System includes
 //
 
-// Class include
 // Project includes
 #include "QuICC/Model/Boussinesq/Sphere/TC/Explicit/PhysicalModel.hpp"
 #include "QuICC/Model/Boussinesq/Sphere/TC/Explicit/ModelBackend.hpp"
@@ -45,9 +44,9 @@ namespace Explicit {
 #endif
    }
 
-}
-}
-}
-}
-}
-}
+} // Explicit
+} // TC
+} // Sphere
+} // Boussinesq
+} // Model
+} // QuICC

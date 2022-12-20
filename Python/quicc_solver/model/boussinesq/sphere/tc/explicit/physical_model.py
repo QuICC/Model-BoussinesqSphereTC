@@ -39,7 +39,7 @@ class PhysicalModel(base_model.BaseModel):
 
     def implicit_fields(self, field_row):
         """Get the list of coupled fields in solve"""
-    
+
         fields = [field_row]
 
         return fields
@@ -84,7 +84,7 @@ class PhysicalModel(base_model.BaseModel):
 
     def stencil(self, res, eq_params, eigs, bcs, field_row, make_square):
         """Create the galerkin stencil"""
-        
+
         assert(eigs[0].is_integer())
         l = eigs[0]
 
@@ -153,7 +153,7 @@ class PhysicalModel(base_model.BaseModel):
                             bc = {0:21}
                     elif field_row == ("temperature","") and field_col == field_row:
                             bc = {0:11}
-            
+
             # Set LHS galerkin restriction
             if self.use_galerkin:
                 if field_row == ("velocity","tor"):
@@ -182,7 +182,7 @@ class PhysicalModel(base_model.BaseModel):
                         bc = {0:-21, 'rt':2}
                     elif field_col == ("temperature",""):
                         bc = {0:-11, 'rt':1}
-        
+
         # Field values to RHS:
         elif bcs["bcType"] == self.FIELD_TO_RHS:
             bc = no_bc()

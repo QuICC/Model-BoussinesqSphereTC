@@ -37,6 +37,7 @@
 #include "QuICC/Io/Variable/SphereTorPolLSpectrumWriter.hpp"
 #include "QuICC/Io/Variable/SphereTorPolMSpectrumWriter.hpp"
 #include "QuICC/Io/Variable/SphereTorPolNSpectrumWriter.hpp"
+#include "QuICC/Io/Variable/SphereTorPolModeSpectrumWriter.hpp"
 #include "QuICC/Io/Variable/SphereAngularMomentumWriter.hpp"
 #include "QuICC/Io/Variable/SphereTorPolEnstrophyWriter.hpp"
 #include "QuICC/Io/Variable/SphereTorPolEnstrophyLSpectrumWriter.hpp"
@@ -226,6 +227,8 @@ namespace TC {
       tags.emplace("kinetic_l_spectrum", options);
       tags.emplace("kinetic_m_spectrum", options);
       tags.emplace("kinetic_n_spectrum", options);
+      tags.emplace("kinetic_mode_spectrum", options);
+
       // temperature
       tags.emplace("temperature_energy", onOff);
       tags.emplace("temperature_l_spectrum", options);
@@ -266,6 +269,9 @@ namespace TC {
 
       // Create kinetic N power spectrum writer
       this->enableAsciiFile<Io::Variable::SphereTorPolNSpectrumWriter>("kinetic_n_spectrum", "kinetic", PhysicalNames::Velocity::id(), spSim);
+
+      // Create kinetic mode power spectrum writer
+      this->enableAsciiFile<Io::Variable::SphereTorPolModeSpectrumWriter>("kinetic_mode_spectrum", "kinetic", PhysicalNames::Velocity::id(), spSim);
 
       // Create angular momentum writer
       this->enableAsciiFile<Io::Variable::SphereAngularMomentumWriter>("angular_momentum", "", PhysicalNames::Velocity::id(), spSim);

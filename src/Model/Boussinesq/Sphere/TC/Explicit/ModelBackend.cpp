@@ -17,6 +17,9 @@
 #include "QuICC/ModelOperator/ExplicitNextstep.hpp"
 #include "QuICC/ModelOperator/Stencil.hpp"
 #include "QuICC/ModelOperator/Boundary.hpp"
+#include "QuICC/ModelOperator/SplitImplicitLinear.hpp"
+#include "QuICC/ModelOperator/SplitBoundary.hpp"
+#include "QuICC/ModelOperator/SplitBoundaryValue.hpp"
 #include "QuICC/ModelOperatorBoundary/FieldToRhs.hpp"
 #include "QuICC/ModelOperatorBoundary/SolverHasBc.hpp"
 #include "QuICC/ModelOperatorBoundary/SolverNoTau.hpp"
@@ -26,10 +29,10 @@
 #include "QuICC/Bc/Name/FixedFlux.hpp"
 #include "QuICC/Bc/Name/StressFree.hpp"
 #include "QuICC/Bc/Name/NoSlip.hpp"
-#include "QuICC/NonDimensional/Rayleigh.hpp"
 #include "QuICC/PhysicalNames/Velocity.hpp"
 #include "QuICC/PhysicalNames/Temperature.hpp"
 #include "QuICC/NonDimensional/Prandtl.hpp"
+#include "QuICC/NonDimensional/Rayleigh.hpp"
 #include "QuICC/Tools/IdToHuman.hpp"
 #include "QuICC/Resolutions/Tools/IndexCounter.hpp"
 #include "QuICC/SparseSM/Worland/Id.hpp"
@@ -266,7 +269,7 @@ namespace Explicit {
       // Time operator
       if(opId == ModelOperator::Time::id())
       {
-         bool needStencil = (this->mUseGalerkin && bcType == ModelOperatorBoundary::SolverNoTau::id());
+         bool needStencil = (this->useGalerkin() && bcType == ModelOperatorBoundary::SolverNoTau::id());
          bool needTau = bcType == ModelOperatorBoundary::SolverHasBc::id();
 
          for(auto pRowId = imRange.first; pRowId != imRange.second; pRowId++)
@@ -276,44 +279,44 @@ namespace Explicit {
             // Apply boundary condition
             if(needStencil)
             {
-               this->applyGalerkinStencil(rModelMatrix, *pRowId, *pRowId, l, res, bcs, nds);
+               this->applyGalerkinStencil(rModelMatrix.real(), *pRowId, *pRowId, l, res, bcs, nds);
             }
             else if(needTau)
             {
-               this->applyTau(rModelMatrix, *pRowId, *pRowId, l, res, bcs, nds, false);
+               this->applyTau(rModelMatrix.real(), *pRowId, *pRowId, l, res, bcs, nds, false);
             }
          }
       }
       // Linear operator
-      else if(opId == ModelOperator::ImplicitLinear::id())
+      else if(opId == ModelOperator::ImplicitLinear::id() || opId == ModelOperator::SplitImplicitLinear::id())
       {
          bool isSplit = (opId == ModelOperator::SplitImplicitLinear::id());
-         bool needStencil = (this->mUseGalerkin && bcType == ModelOperatorBoundary::SolverNoTau::id());
+         bool needStencil = (this->useGalerkin() && bcType == ModelOperatorBoundary::SolverNoTau::id());
          bool needTau = bcType == ModelOperatorBoundary::SolverHasBc::id();
 
          for(auto pRowId = imRange.first; pRowId != imRange.second; pRowId++)
          {
             for(auto pColId = imRange.first; pColId != imRange.second; pColId++)
             {
-               this->implicitBlock(rModelMatrix, *pRowId, *pColId, matIdx, res, eigs, nds);
+               this->implicitBlock(rModelMatrix, *pRowId, *pColId, matIdx, res, eigs, nds, isSplit);
 
                // Apply boundary condition
                if(needStencil)
                {
-                  this->applyGalerkinStencil(rModelMatrix, *pRowId, *pColId, l, res, bcs, nds);
+                  this->applyGalerkinStencil(rModelMatrix.real(), *pRowId, *pColId, l, res, bcs, nds);
                }
                else if(needTau)
                {
-                  this->applyTau(rModelMatrix, *pRowId, *pColId, l, res, bcs, nds, isSplit);
+                  this->applyTau(rModelMatrix.real(), *pRowId, *pColId, l, res, bcs, nds, isSplit);
                }
             }
          }
       }
       // Boundary operator
-      else if(opId == ModelOperator::Boundary::id())
+      else if(opId == ModelOperator::Boundary::id() || opId == ModelOperator::SplitBoundary::id())
       {
          bool isSplit = (opId == ModelOperator::SplitBoundary::id());
-         bool needStencil = this->mUseGalerkin;
+         bool needStencil = this->useGalerkin();
          bool needTau = (bcType == ModelOperatorBoundary::SolverHasBc::id());
 
          auto nN = res.counter().dimensions(Dimensions::Space::SPECTRAL, l)(0);
@@ -327,11 +330,11 @@ namespace Explicit {
                // Apply boundary condition
                if(needStencil)
                {
-                  this->applyGalerkinStencil(rModelMatrix, *pRowId, *pColId, l, res, bcs, nds);
+                  this->applyGalerkinStencil(rModelMatrix.real(), *pRowId, *pColId, l, res, bcs, nds);
                }
                else if(needTau)
                {
-                  this->applyTau(rModelMatrix, *pRowId, *pColId, l, res, bcs, nds, isSplit);
+                  this->applyTau(rModelMatrix.real(), *pRowId, *pColId, l, res, bcs, nds, isSplit);
                }
             }
          }

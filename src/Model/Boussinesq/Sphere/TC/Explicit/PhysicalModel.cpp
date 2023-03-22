@@ -7,12 +7,10 @@
 //
 
 // Project includes
+//
 #include "QuICC/Model/Boussinesq/Sphere/TC/Explicit/PhysicalModel.hpp"
 #include "QuICC/Model/Boussinesq/Sphere/TC/Explicit/ModelBackend.hpp"
 #include "QuICC/Model/PyModelBackend.hpp"
-
-// Force use of C++ backend
-#define QUICC_MODEL_BOUSSINESQSPHERETC_EXPLICIT_BACKEND_CPP
 
 namespace QuICC {
 

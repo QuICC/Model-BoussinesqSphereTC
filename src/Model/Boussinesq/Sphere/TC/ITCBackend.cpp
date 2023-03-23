@@ -32,7 +32,6 @@
 #include "QuICC/PhysicalNames/Temperature.hpp"
 #include "QuICC/NonDimensional/Prandtl.hpp"
 #include "QuICC/NonDimensional/Rayleigh.hpp"
-#include "QuICC/NonDimensional/Ekman.hpp"
 #include "QuICC/NonDimensional/CflInertial.hpp"
 #include "QuICC/Tools/IdToHuman.hpp"
 #include "QuICC/Resolutions/Tools/IndexCounter.hpp"

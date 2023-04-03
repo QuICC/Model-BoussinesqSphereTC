@@ -75,7 +75,6 @@ namespace Explicit {
       mcTruncateQI(false)
 #endif // QUICC_TRANSFORM_WORLAND_TRUNCATE_QI
    {
-      this->enableSplitEquation(false);
    }
 
    ModelBackend::SpectralFieldIds ModelBackend::implicitFields(const SpectralFieldId& fId) const

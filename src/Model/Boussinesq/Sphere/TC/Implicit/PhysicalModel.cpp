@@ -3,21 +3,12 @@
  * @brief Source of the Boussinesq thermal convection in a sphere (Toroidal/Poloidal formulation)
  */
 
-// Configuration includes
-//
-
 // System includes
 //
 
-// External includes
-//
-
-// Class include
-//
-#include "QuICC/Model/Boussinesq/Sphere/TC/Implicit/PhysicalModel.hpp"
-
 // Project includes
 //
+#include "QuICC/Model/Boussinesq/Sphere/TC/Implicit/PhysicalModel.hpp"
 
 namespace QuICC {
 
@@ -36,9 +27,9 @@ namespace Implicit {
       return "boussinesq.sphere.tc.implicit.physical_model";
    }
 
-}
-}
-}
-}
-}
-}
+} // Implicit
+} // TC
+} // Sphere
+} // Boussinesq
+} // Model
+} // QuICC

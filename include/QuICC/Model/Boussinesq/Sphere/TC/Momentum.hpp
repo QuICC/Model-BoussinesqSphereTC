@@ -51,6 +51,8 @@ namespace TC {
 
          /**
           * @brief Initialize constraint kernel
+          *
+          * @param spMesh  Physical space mesh
           */
          void initConstraintKernel(const std::shared_ptr<std::vector<Array> >) final;
 

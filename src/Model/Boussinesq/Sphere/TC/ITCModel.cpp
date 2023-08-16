@@ -3,21 +3,12 @@
  * @brief Source of the Boussinesq thermal convection in a sphere (Toroidal/Poloidal formulation)
  */
 
-// Configuration includes
-//
-
 // System includes
 //
 
-// External includes
-//
-
-// Class include
-//
-#include "QuICC/Model/Boussinesq/Sphere/TC/ITCModel.hpp"
-
 // Project includes
 //
+#include "QuICC/Model/Boussinesq/Sphere/TC/ITCModel.hpp"
 #include "QuICC/Model/Boussinesq/Sphere/TC/Transport.hpp"
 #include "QuICC/Model/Boussinesq/Sphere/TC/Momentum.hpp"
 #include "Model/Boussinesq/Sphere/TC/gitHash.hpp"
@@ -30,6 +21,7 @@
 #include "QuICC/Io/Variable/StateFileWriter.hpp"
 #include "QuICC/Io/Variable/VisualizationFileWriter.hpp"
 #include "QuICC/Io/Variable/SphereNusseltWriter.hpp"
+#include "QuICC/Io/Variable/SphereScalarMeanWriter.hpp"
 #include "QuICC/Io/Variable/SphereScalarEnergyWriter.hpp"
 #include "QuICC/Io/Variable/SphereScalarLSpectrumWriter.hpp"
 #include "QuICC/Io/Variable/SphereScalarMSpectrumWriter.hpp"
@@ -240,6 +232,7 @@ namespace TC {
       // diagnostic
       tags.emplace("angular_momentum", onOff);
       tags.emplace("nusselt", onOff);
+      tags.emplace("temperature_mean", onOff);
 
       return tags;
    }
@@ -248,6 +241,9 @@ namespace TC {
    {
       // Create Nusselt writer
       this->enableAsciiFile<Io::Variable::SphereNusseltWriter>("nusselt", "", PhysicalNames::Temperature::id(), spSim);
+
+      // Create mean Temperature writer
+      this->enableAsciiFile<Io::Variable::SphereScalarMeanWriter>("temperature_mean", "temperature", PhysicalNames::Temperature::id(), spSim);
 
       // Create temperature energy writer
       this->enableAsciiFile<Io::Variable::SphereScalarEnergyWriter>("temperature_energy", "temperature", PhysicalNames::Temperature::id(), spSim);

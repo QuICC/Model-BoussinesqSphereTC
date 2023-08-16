@@ -6,18 +6,9 @@
 #ifndef QUICC_PHYSICAL_TRANSPORTKERNEL_HPP
 #define QUICC_PHYSICAL_TRANSPORTKERNEL_HPP
 
-// First include
-//
-
-// Configuration includes
-//
-#include <memory>
-
 // System includes
 //
-
-// External includes
-//
+#include <memory>
 
 // Project includes
 //
@@ -43,7 +34,7 @@ namespace Kernel {
          /**
           * @brief Simple empty destructor
           */
-         virtual ~TransportKernel();
+         virtual ~TransportKernel() = default;
 
          /**
           * @brief Set the physical mesh on which kernel is working

@@ -228,6 +228,9 @@ namespace TC {
       tags.emplace("kinetic_m_spectrum", options);
       tags.emplace("kinetic_n_spectrum", options);
       tags.emplace("kinetic_mode_spectrum", options);
+      tags.emplace("kinetic_enstrophy", onOff);
+      tags.emplace("kinetic_enstrophy_l_spectrum", options);
+      tags.emplace("kinetic_enstrophy_m_spectrum", options);
 
       // temperature tags
       tags.emplace("temperature_energy", onOff);
@@ -281,6 +284,15 @@ namespace TC {
 
       // Create kinetic mode energy spectrum writer
       this->enableAsciiFile<Io::Variable::SphereTorPolModeSpectrumWriter>("kinetic_mode_spectrum", "kinetic", PhysicalNames::Velocity::id(), spSim);
+
+      // Create kinetic enstrophy writer
+      this->enableAsciiFile<Io::Variable::SphereTorPolEnstrophyWriter>("kinetic_enstrophy", "kinetic", PhysicalNames::Velocity::id(), spSim);
+
+      // Create kinetic L enstrophy spectrum writer
+      this->enableAsciiFile<Io::Variable::SphereTorPolEnstrophyLSpectrumWriter>("kinetic_enstrophy_l_spectrum", "kinetic", PhysicalNames::Velocity::id(), spSim);
+
+      // Create kinetic M enstrophy spectrum writer
+      this->enableAsciiFile<Io::Variable::SphereTorPolEnstrophyMSpectrumWriter>("kinetic_enstrophy_m_spectrum", "kinetic", PhysicalNames::Velocity::id(), spSim);
 
       // Create angular momentum writer
       this->enableAsciiFile<Io::Variable::SphereAngularMomentumWriter>("angular_momentum", "", PhysicalNames::Velocity::id(), spSim);

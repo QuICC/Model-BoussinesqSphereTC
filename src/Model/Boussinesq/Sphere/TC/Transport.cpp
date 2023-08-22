@@ -3,21 +3,12 @@
  * @brief Source of the implementation of the transport equation in the Boussinesq thermal convection in a sphere
  */
 
-// Configuration includes
-//
-
 // System includes
 //
 
-// External includes
-//
-
-// Class include
-//
-#include "QuICC/Model/Boussinesq/Sphere/TC/Transport.hpp"
-
 // Project includes
 //
+#include "QuICC/Model/Boussinesq/Sphere/TC/Transport.hpp"
 #include "QuICC/Typedefs.hpp"
 #include "QuICC/Math/Constants.hpp"
 #include "QuICC/PhysicalNames/Velocity.hpp"
@@ -41,10 +32,6 @@ namespace TC {
    {
       // Set the variable requirements
       this->setRequirements();
-   }
-
-   Transport::~Transport()
-   {
    }
 
    void Transport::setCoupling()

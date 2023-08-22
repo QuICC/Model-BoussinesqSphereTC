@@ -3,21 +3,12 @@
  * @brief Source of physical space kernel for the Transport equation
  */
 
-// Configuration includes
-//
-
 // System includes
 //
 
-// External includes
-//
-
-// Class include
-//
-#include "QuICC/Model/Boussinesq/Sphere/TC/TransportKernel.hpp"
-
 // Project includes
 //
+#include "QuICC/Model/Boussinesq/Sphere/TC/TransportKernel.hpp"
 #include "QuICC/PhysicalOperators/SphericalHeatAdvection.hpp"
 
 namespace QuICC {
@@ -28,10 +19,6 @@ namespace Kernel {
 
    TransportKernel::TransportKernel()
       : IPhysicalKernel()
-   {
-   }
-
-   TransportKernel::~TransportKernel()
    {
    }
 

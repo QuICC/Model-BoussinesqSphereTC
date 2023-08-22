@@ -6,15 +6,9 @@
 #ifndef QUICC_MODEL_BOUSSINESQ_SPHERE_TC_MOMENTUM_HPP
 #define QUICC_MODEL_BOUSSINESQ_SPHERE_TC_MOMENTUM_HPP
 
-// Configuration includes
-//
-
 // System includes
 //
 #include <memory>
-
-// External includes
-//
 
 // Project includes
 //
@@ -47,7 +41,7 @@ namespace TC {
          /**
           * @brief Simple empty destructor
           */
-         virtual ~Momentum();
+         virtual ~Momentum() = default;
 
          /**
           * @brief Initialize constraint kernel

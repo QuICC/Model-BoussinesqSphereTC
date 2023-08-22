@@ -3,21 +3,12 @@
  * @brief Source of the Boussinesq thermal convection in a sphere (Toroidal/Poloidal formulation)
  */
 
-// Configuration includes
-//
-
 // System includes
 //
 
-// External includes
-//
-
-// Class include
-//
-#include "QuICC/Model/Boussinesq/Sphere/TC/ITCModel.hpp"
-
 // Project includes
 //
+#include "QuICC/Model/Boussinesq/Sphere/TC/ITCModel.hpp"
 #include "QuICC/Model/Boussinesq/Sphere/TC/Transport.hpp"
 #include "QuICC/Model/Boussinesq/Sphere/TC/Momentum.hpp"
 #include "Model/Boussinesq/Sphere/TC/gitHash.hpp"
@@ -29,7 +20,9 @@
 #include "QuICC/Io/Variable/StateFileReader.hpp"
 #include "QuICC/Io/Variable/StateFileWriter.hpp"
 #include "QuICC/Io/Variable/VisualizationFileWriter.hpp"
+#include "QuICC/Io/Variable/SphereMaxAbsoluteFieldValueWriter.hpp"
 #include "QuICC/Io/Variable/SphereNusseltWriter.hpp"
+#include "QuICC/Io/Variable/SphereScalarMeanWriter.hpp"
 #include "QuICC/Io/Variable/SphereScalarEnergyWriter.hpp"
 #include "QuICC/Io/Variable/SphereScalarLSpectrumWriter.hpp"
 #include "QuICC/Io/Variable/SphereScalarMSpectrumWriter.hpp"
@@ -38,6 +31,7 @@
 #include "QuICC/Io/Variable/SphereTorPolLSpectrumWriter.hpp"
 #include "QuICC/Io/Variable/SphereTorPolMSpectrumWriter.hpp"
 #include "QuICC/Io/Variable/SphereTorPolNSpectrumWriter.hpp"
+#include "QuICC/Io/Variable/SphereTorPolModeSpectrumWriter.hpp"
 #include "QuICC/Io/Variable/SphereAngularMomentumWriter.hpp"
 #include "QuICC/Io/Variable/SphereTorPolEnstrophyWriter.hpp"
 #include "QuICC/Io/Variable/SphereTorPolEnstrophyLSpectrumWriter.hpp"
@@ -227,19 +221,28 @@ namespace TC {
       options.emplace("only_every", 1);
 
       std::map<std::string,std::map<std::string,int> > tags;
-      // kinetic
+
+      // kinetic tags
       tags.emplace("kinetic_energy", onOff);
       tags.emplace("kinetic_l_spectrum", options);
       tags.emplace("kinetic_m_spectrum", options);
       tags.emplace("kinetic_n_spectrum", options);
-      // temperature
+      tags.emplace("kinetic_mode_spectrum", options);
+      tags.emplace("kinetic_enstrophy", onOff);
+      tags.emplace("kinetic_enstrophy_l_spectrum", options);
+      tags.emplace("kinetic_enstrophy_m_spectrum", options);
+
+      // temperature tags
       tags.emplace("temperature_energy", onOff);
       tags.emplace("temperature_l_spectrum", options);
       tags.emplace("temperature_m_spectrum", options);
       tags.emplace("temperature_n_spectrum", options);
-      // diagnostic
+
+      // diagnostic tags
       tags.emplace("angular_momentum", onOff);
       tags.emplace("nusselt", onOff);
+      tags.emplace("temperature_mean", onOff);
+      tags.emplace("velocity_max", onOff);
 
       return tags;
    }
@@ -248,6 +251,9 @@ namespace TC {
    {
       // Create Nusselt writer
       this->enableAsciiFile<Io::Variable::SphereNusseltWriter>("nusselt", "", PhysicalNames::Temperature::id(), spSim);
+
+      // Create mean Temperature writer
+      this->enableAsciiFile<Io::Variable::SphereScalarMeanWriter>("temperature_mean", "temperature", PhysicalNames::Temperature::id(), spSim);
 
       // Create temperature energy writer
       this->enableAsciiFile<Io::Variable::SphereScalarEnergyWriter>("temperature_energy", "temperature", PhysicalNames::Temperature::id(), spSim);
@@ -261,6 +267,9 @@ namespace TC {
       // Create temperature N power spectrum writer
       this->enableAsciiFile<Io::Variable::SphereScalarNSpectrumWriter>("temperature_n_spectrum", "temperature", PhysicalNames::Temperature::id(), spSim);
 
+      // Create max absolute velocity writer
+      this->enableAsciiFile<Io::Variable::SphereMaxAbsoluteFieldValueWriter>("velocity_max", "velocity", PhysicalNames::Velocity::id(), spSim);
+
       // Create kinetic energy writer
       this->enableAsciiFile<Io::Variable::SphereTorPolEnergyWriter>("kinetic_energy", "kinetic", PhysicalNames::Velocity::id(), spSim);
 
@@ -272,6 +281,18 @@ namespace TC {
 
       // Create kinetic N power spectrum writer
       this->enableAsciiFile<Io::Variable::SphereTorPolNSpectrumWriter>("kinetic_n_spectrum", "kinetic", PhysicalNames::Velocity::id(), spSim);
+
+      // Create kinetic mode energy spectrum writer
+      this->enableAsciiFile<Io::Variable::SphereTorPolModeSpectrumWriter>("kinetic_mode_spectrum", "kinetic", PhysicalNames::Velocity::id(), spSim);
+
+      // Create kinetic enstrophy writer
+      this->enableAsciiFile<Io::Variable::SphereTorPolEnstrophyWriter>("kinetic_enstrophy", "kinetic", PhysicalNames::Velocity::id(), spSim);
+
+      // Create kinetic L enstrophy spectrum writer
+      this->enableAsciiFile<Io::Variable::SphereTorPolEnstrophyLSpectrumWriter>("kinetic_enstrophy_l_spectrum", "kinetic", PhysicalNames::Velocity::id(), spSim);
+
+      // Create kinetic M enstrophy spectrum writer
+      this->enableAsciiFile<Io::Variable::SphereTorPolEnstrophyMSpectrumWriter>("kinetic_enstrophy_m_spectrum", "kinetic", PhysicalNames::Velocity::id(), spSim);
 
       // Create angular momentum writer
       this->enableAsciiFile<Io::Variable::SphereAngularMomentumWriter>("angular_momentum", "", PhysicalNames::Velocity::id(), spSim);

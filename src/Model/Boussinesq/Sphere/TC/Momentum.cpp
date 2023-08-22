@@ -3,21 +3,12 @@
  * @brief Source of the implementation of the vector Navier-Stokes equation in the Boussinesq thermal convection in a sphere model
  */
 
-// Configuration includes
-//
-
 // System includes
 //
 
-// External includes
-//
-
-// Class include
-//
-#include "QuICC/Model/Boussinesq/Sphere/TC/Momentum.hpp"
-
 // Project includes
 //
+#include "QuICC/Model/Boussinesq/Sphere/TC/Momentum.hpp"
 #include "QuICC/Typedefs.hpp"
 #include "QuICC/Math/Constants.hpp"
 #include "QuICC/PhysicalNames/Temperature.hpp"
@@ -48,10 +39,6 @@ namespace TC {
    {
       // Set the variable requirements
       this->setRequirements();
-   }
-
-   Momentum::~Momentum()
-   {
    }
 
    void Momentum::setCoupling()

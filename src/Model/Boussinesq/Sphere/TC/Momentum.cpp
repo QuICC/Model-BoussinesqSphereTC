@@ -9,8 +9,6 @@
 // Project includes
 //
 #include "QuICC/Model/Boussinesq/Sphere/TC/Momentum.hpp"
-#include "QuICC/Typedefs.hpp"
-#include "QuICC/Math/Constants.hpp"
 #include "QuICC/PhysicalNames/Temperature.hpp"
 #include "QuICC/PhysicalNames/Velocity.hpp"
 #include "QuICC/Bc/Name/StressFree.hpp"

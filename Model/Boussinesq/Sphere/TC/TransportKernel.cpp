@@ -8,7 +8,7 @@
 
 // Project includes
 //
-#include "QuICC/Model/Boussinesq/Sphere/TC/TransportKernel.hpp"
+#include "Model/Boussinesq//Sphere/TC/TransportKernel.hpp"
 #include "QuICC/PhysicalOperators/SphericalHeatAdvection.hpp"
 
 namespace QuICC {

@@ -8,7 +8,7 @@
 
 // Project includes
 //
-#include "QuICC/Model/Boussinesq/Sphere/TC/MomentumKernel.hpp"
+#include "Model/Boussinesq//Sphere/TC/MomentumKernel.hpp"
 #include "QuICC/SpatialScheme/ISpatialScheme.hpp"
 #include "QuICC/PhysicalOperators/Cross.hpp"
 #include "QuICC/PhysicalOperators/SphericalBuoyancy.hpp"

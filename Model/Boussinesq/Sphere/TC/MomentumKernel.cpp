@@ -8,7 +8,7 @@
 
 // Project includes
 //
-#include "QuICC/Model/Boussinesq/Sphere/TC/MomentumKernel.hpp"
+#include "Model/Boussinesq/Sphere/TC/MomentumKernel.hpp"
 #include "QuICC/SpatialScheme/ISpatialScheme.hpp"
 #include "QuICC/PhysicalOperators/Cross.hpp"
 #include "QuICC/PhysicalOperators/SphericalBuoyancy.hpp"
@@ -71,13 +71,25 @@ namespace Kernel {
       switch(id)
       {
          case(FieldComponents::Physical::R):
-            std::visit([&](auto&& v){Physical::Cross<FieldComponents::Physical::THETA,FieldComponents::Physical::PHI>::set(rNLComp, v->dom(0).curl(), v->dom(0).phys(), this->mInertia);}, this->vector(this->name()));
+            std::visit(
+                  [&](auto&& v)
+                  {
+                     Physical::Cross<FieldComponents::Physical::THETA,FieldComponents::Physical::PHI>::set(rNLComp, v->dom(0).curl(), v->dom(0).phys(), this->mInertia);
+                  }, this->vector(this->name()));
             break;
          case(FieldComponents::Physical::THETA):
-            std::visit([&](auto&& v){Physical::Cross<FieldComponents::Physical::PHI,FieldComponents::Physical::R>::set(rNLComp, v->dom(0).curl(), v->dom(0).phys(), this->mInertia);}, this->vector(this->name()));
+            std::visit(
+                  [&](auto&& v)
+                  {
+                     Physical::Cross<FieldComponents::Physical::PHI,FieldComponents::Physical::R>::set(rNLComp, v->dom(0).curl(), v->dom(0).phys(), this->mInertia);
+                  }, this->vector(this->name()));
             break;
          case(FieldComponents::Physical::PHI):
-            std::visit([&](auto&& v){Physical::Cross<FieldComponents::Physical::R,FieldComponents::Physical::THETA>::set(rNLComp, v->dom(0).curl(), v->dom(0).phys(), this->mInertia);}, this->vector(this->name()));
+            std::visit(
+                  [&](auto&& v)
+                  {
+                     Physical::Cross<FieldComponents::Physical::R,FieldComponents::Physical::THETA>::set(rNLComp, v->dom(0).curl(), v->dom(0).phys(), this->mInertia);
+                  }, this->vector(this->name()));
             break;
          default:
             assert(false);
@@ -85,7 +97,11 @@ namespace Kernel {
       }
 
       // Buoyancy
-      std::visit([&](auto&& s){Physical::SphericalBuoyancy::sub(rNLComp, id, s->dom(0).res(), this->mRadius, s->dom(0).phys(), this->mBuoyancy);}, this->scalar(this->mTempName));
+      std::visit(
+            [&](auto&& s)
+            {
+               Physical::SphericalBuoyancy::sub(rNLComp, id, s->dom(0).res(), this->mRadius, s->dom(0).phys(), this->mBuoyancy);
+            }, this->scalar(this->mTempName));
    }
 
 }

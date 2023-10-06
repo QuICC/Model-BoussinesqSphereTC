@@ -8,12 +8,12 @@
 
 // Project includes
 //
-#include "QuICC/Model/Boussinesq/Sphere/TC/Transport.hpp"
+#include "Model/Boussinesq/Sphere/TC/Transport.hpp"
 #include "QuICC/PhysicalNames/Velocity.hpp"
 #include "QuICC/PhysicalNames/Temperature.hpp"
 #include "QuICC/SolveTiming/Prognostic.hpp"
 #include "QuICC/Transform/Path/I2ScalarNl.hpp"
-#include "QuICC/Model/Boussinesq/Sphere/TC/TransportKernel.hpp"
+#include "Model/Boussinesq/Sphere/TC/TransportKernel.hpp"
 
 namespace QuICC {
 

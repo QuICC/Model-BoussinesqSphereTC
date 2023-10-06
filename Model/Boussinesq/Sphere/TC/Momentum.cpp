@@ -8,7 +8,7 @@
 
 // Project includes
 //
-#include "Model/Boussinesq//Sphere/TC/Momentum.hpp"
+#include "Model/Boussinesq/Sphere/TC/Momentum.hpp"
 #include "QuICC/PhysicalNames/Temperature.hpp"
 #include "QuICC/PhysicalNames/Velocity.hpp"
 #include "QuICC/Bc/Name/StressFree.hpp"
@@ -20,7 +20,7 @@
 #include "QuICC/Transform/Path/I2CurlNl.hpp"
 #include "QuICC/Transform/Path/NegI2CurlCurlNl.hpp"
 #include "QuICC/Transform/Path/NegI4CurlCurlNl.hpp"
-#include "Model/Boussinesq//Sphere/TC/MomentumKernel.hpp"
+#include "Model/Boussinesq/Sphere/TC/MomentumKernel.hpp"
 
 namespace QuICC {
 

@@ -8,7 +8,7 @@
 
 // Project includes
 //
-#include "Model/Boussinesq//Sphere/TC/Implicit/PhysicalModel.hpp"
+#include "Model/Boussinesq/Sphere/TC/Implicit/PhysicalModel.hpp"
 
 namespace QuICC {
 

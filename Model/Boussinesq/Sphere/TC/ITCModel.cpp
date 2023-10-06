@@ -8,9 +8,9 @@
 
 // Project includes
 //
-#include "Model/Boussinesq//Sphere/TC/ITCModel.hpp"
-#include "Model/Boussinesq//Sphere/TC/Transport.hpp"
-#include "Model/Boussinesq//Sphere/TC/Momentum.hpp"
+#include "Model/Boussinesq/Sphere/TC/ITCModel.hpp"
+#include "Model/Boussinesq/Sphere/TC/Transport.hpp"
+#include "Model/Boussinesq/Sphere/TC/Momentum.hpp"
 #include "Model/Boussinesq/Sphere/TC/gitHash.hpp"
 #include "QuICC/Enums/FieldIds.hpp"
 #include "QuICC/PhysicalNames/Temperature.hpp"

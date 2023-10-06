@@ -195,8 +195,10 @@ namespace Explicit {
       }
       else if(rowId == std::make_pair(PhysicalNames::Temperature::id(), FieldComponents::Spectral::SCALAR) && rowId == colId)
       {
+         auto c = 1.0/nds.find(NonDimensional::Prandtl::id())->second->value();
+
          SparseSM::Worland::I2Lapl spasm(nN, nN, a, b, l, 1*this->mcTruncateQI);
-         decMat.real() = spasm.mat();
+         decMat.real() = c*spasm.mat();
       }
       else
       {
@@ -234,10 +236,8 @@ namespace Explicit {
       }
       else if(fieldId == std::make_pair(PhysicalNames::Temperature::id(), FieldComponents::Spectral::SCALAR))
       {
-         auto Pr = nds.find(NonDimensional::Prandtl::id())->second->value();
-
          SparseSM::Worland::I2 spasm(nN, nN, a, b, l, 1*this->mcTruncateQI);
-         decMat.real() = Pr*spasm.mat();
+         decMat.real() = spasm.mat();
       }
    }
 

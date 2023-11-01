@@ -15,7 +15,7 @@
 
 // Project includes
 //
-#include "QuICC/Model/IModelBackend.hpp"
+#include "QuICC/Model/ISphericalModelBackend.hpp"
 
 namespace QuICC {
 
@@ -30,13 +30,13 @@ namespace TC {
    /**
     * @brief Base model backend for TC model
     */
-   class ITCBackend: public IModelBackend
+   class ITCBackend: public ISphericalModelBackend
    {
       public:
          /**
           * @brief Constructor
           */
-         ITCBackend();
+         ITCBackend() = default;
 
          /**
           * @brief Destructor
@@ -71,20 +71,7 @@ namespace TC {
           *
           * @fId  Field ID
           */
-         int nBc(const SpectralFieldId& fId) const;
-
-         /**
-          * @brief Get operator block information
-          *
-          * @param tN      Tau radial size
-          * @param gN      Galerkin radial truncation
-          * @param shift   Shift in each direction due to Galerkin basis
-          * @param fId     ID of the field
-          * @param res     Resolution object
-          * @param l       Harmonic degree
-          * @param bcs     Boundary conditions
-          */
-         void blockInfo(int& tN, int& gN, ArrayI& shift, int& rhs, const SpectralFieldId& fId, const Resolution& res, const MHDFloat l, const BcMap& bcs) const;
+         int nBc(const SpectralFieldId& fId) const override;
 
          /**
           * @brief Apply tau line for boundary condition
@@ -98,7 +85,7 @@ namespace TC {
           * @param nds     Nondimensional parameters
           * @param isSplitOperator  Is second operator of split 4th order system?
           */
-         void applyTau(SparseMatrix& mat, const SpectralFieldId& rowId, const SpectralFieldId& colId, const int l, const Resolution& res, const BcMap& bcs, const NonDimensional::NdMap& nds, const bool isSplitOperator) const;
+         void applyTau(SparseMatrix& mat, const SpectralFieldId& rowId, const SpectralFieldId& colId, const int l, const Resolution& res, const BcMap& bcs, const NonDimensional::NdMap& nds, const bool isSplitOperator) const override;
 
          /**
           * @brief Boundary condition stencil
@@ -119,20 +106,21 @@ namespace TC {
           * @param mat     Input/Output matrix to apply stencil to
           * @param rowId   ID of field of equation
           * @param colId   ID of field 
-          * @param l       Harmonic degree
+          * @param lr      Row space harmonic degree
+          * @param lc      Column space harmonic degree
           * @param res     Resolution object
           * @param bcs     Boundary conditions
           * @param nds     Nondimensional parameters
           */
-         void applyGalerkinStencil(SparseMatrix& decMat, const SpectralFieldId& rowId, const SpectralFieldId& colId, const int l, const Resolution& res, const BcMap& bcs, const NonDimensional::NdMap& nds) const;
+         void applyGalerkinStencil(SparseMatrix& decMat, const SpectralFieldId& rowId, const SpectralFieldId& colId, const int lr, const int lc, const Resolution& res, const BcMap& bcs, const NonDimensional::NdMap& nds) const override;
 
       private:
    };
 
-} // TC
-} // Sphere
-} // Boussinesq
-} // Model
-} // QuICC
+} // namespace TC
+} // namespace Sphere
+} // namespace Boussinesq
+} // namespace Model
+} // namespace QuICC
 
 #endif // QUICC_MODEL_BOUSSINESQ_SPHERE_TC_ITCBACKEND_HPP

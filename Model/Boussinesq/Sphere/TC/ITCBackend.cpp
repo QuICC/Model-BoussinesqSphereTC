@@ -58,11 +58,6 @@ namespace Sphere {
 
 namespace TC {
 
-   ITCBackend::ITCBackend()
-      : IModelBackend()
-   {
-   }
-
    std::vector<std::string> ITCBackend::fieldNames() const
    {
       std::vector<std::string> names = {
@@ -118,30 +113,6 @@ namespace TC {
       return nBc;
    }
 
-   void ITCBackend::blockInfo(int& tN, int& gN, ArrayI& shift, int& rhs, const SpectralFieldId& fId, const Resolution& res, const MHDFloat l, const BcMap& bcs) const
-   {
-      auto nN = res.counter().dimensions(Dimensions::Space::SPECTRAL, l)(0);
-      tN = nN;
-
-      int shiftR = this->nBc(fId);
-      if(this->useGalerkin())
-      {
-         gN = (nN - shiftR);
-      }
-      else
-      {
-         shiftR = 0;
-         gN = nN;
-      }
-
-      // Set galerkin shifts
-      shift(0) = shiftR;
-      shift(1) = 0;
-      shift(2) = 0;
-
-      rhs = 1;
-   }
-
    void ITCBackend::applyTau(SparseMatrix& mat, const SpectralFieldId& rowId, const SpectralFieldId& colId, const int l, const Resolution& res, const BcMap& bcs, const NonDimensional::NdMap& nds, const bool isSplitOperator) const
    {
       auto nN = res.counter().dimensions(Dimensions::Space::SPECTRAL, l)(0);
@@ -155,55 +126,61 @@ namespace TC {
 
       if(rowId == std::make_pair(PhysicalNames::Velocity::id(), FieldComponents::Spectral::TOR) && rowId == colId)
       {
-         if(bcId == Bc::Name::NoSlip::id())
-         {
-            bcOp.addRow<SparseSM::Worland::Boundary::Value>();
-         }
-         else if(bcId == Bc::Name::StressFree::id())
-         {
-            bcOp.addRow<SparseSM::Worland::Boundary::R1D1DivR1>();
-         }
-         else
-         {
-            throw std::logic_error("Boundary conditions for Velocity Toroidal component not implemented");
-         }
-      }
-      else if(rowId == std::make_pair(PhysicalNames::Velocity::id(), FieldComponents::Spectral::POL) && rowId == colId)
-      {
-         if(this->useSplitEquation())
-         {
-            if(isSplitOperator)
-            {
-               bcOp.addRow<SparseSM::Worland::Boundary::Value>();
-            }
-            else if(bcId == Bc::Name::NoSlip::id())
-            {
-               bcOp.addRow<SparseSM::Worland::Boundary::D1>();
-            }
-            else if(bcId == Bc::Name::StressFree::id())
-            {
-               bcOp.addRow<SparseSM::Worland::Boundary::D2>();
-            }
-            else
-            {
-               throw std::logic_error("Boundary conditions for Velocity Poloidal component not implemented");
-            }
-         }
-         else
+         if (l > 0)
          {
             if(bcId == Bc::Name::NoSlip::id())
             {
                bcOp.addRow<SparseSM::Worland::Boundary::Value>();
-               bcOp.addRow<SparseSM::Worland::Boundary::D1>();
             }
             else if(bcId == Bc::Name::StressFree::id())
             {
-               bcOp.addRow<SparseSM::Worland::Boundary::Value>();
-               bcOp.addRow<SparseSM::Worland::Boundary::D2>();
+               bcOp.addRow<SparseSM::Worland::Boundary::R1D1DivR1>();
             }
             else
             {
-               throw std::logic_error("Boundary conditions for Velocity Poloidal component not implemented");
+               throw std::logic_error("Boundary conditions for Velocity Toroidal component not implemented");
+            }
+         }
+      }
+      else if(rowId == std::make_pair(PhysicalNames::Velocity::id(), FieldComponents::Spectral::POL) && rowId == colId)
+      {
+         if (l > 0)
+         {
+            if(this->useSplitEquation())
+            {
+               if(isSplitOperator)
+               {
+                  bcOp.addRow<SparseSM::Worland::Boundary::Value>();
+               }
+               else if(bcId == Bc::Name::NoSlip::id())
+               {
+                  bcOp.addRow<SparseSM::Worland::Boundary::D1>();
+               }
+               else if(bcId == Bc::Name::StressFree::id())
+               {
+                  bcOp.addRow<SparseSM::Worland::Boundary::D2>();
+               }
+               else
+               {
+                  throw std::logic_error("Boundary conditions for Velocity Poloidal component not implemented");
+               }
+            }
+            else
+            {
+               if(bcId == Bc::Name::NoSlip::id())
+               {
+                  bcOp.addRow<SparseSM::Worland::Boundary::Value>();
+                  bcOp.addRow<SparseSM::Worland::Boundary::D1>();
+               }
+               else if(bcId == Bc::Name::StressFree::id())
+               {
+                  bcOp.addRow<SparseSM::Worland::Boundary::Value>();
+                  bcOp.addRow<SparseSM::Worland::Boundary::D2>();
+               }
+               else
+               {
+                  throw std::logic_error("Boundary conditions for Velocity Poloidal component not implemented");
+               }
             }
          }
       }
@@ -295,23 +272,23 @@ namespace TC {
       }
    }
 
-   void ITCBackend::applyGalerkinStencil(SparseMatrix& mat, const SpectralFieldId& rowId, const SpectralFieldId& colId, const int l, const Resolution& res, const BcMap& bcs, const NonDimensional::NdMap& nds) const
+   void ITCBackend::applyGalerkinStencil(SparseMatrix& mat, const SpectralFieldId& rowId, const SpectralFieldId& colId, const int lr, const int lc, const Resolution& res, const BcMap& bcs, const NonDimensional::NdMap& nds) const
    {
-      auto nN = res.counter().dimensions(Dimensions::Space::SPECTRAL, l)(0);
+      auto nN = res.counter().dimensions(Dimensions::Space::SPECTRAL, lr)(0);
 
       auto a = Polynomial::Worland::WorlandBase::ALPHA_CHEBYSHEV;
       auto b = Polynomial::Worland::WorlandBase::DBETA_CHEBYSHEV;
 
       auto S = mat;
-      this->stencil(S, colId, l, res, false, bcs, nds);
+      this->stencil(S, colId, lc, res, false, bcs, nds);
 
       auto s = this->nBc(rowId);
-      SparseSM::Worland::Id qId(nN-s, nN, a, b, l, 0, s);
+      SparseSM::Worland::Id qId(nN - s, nN, a, b, lr, 0, s);
       mat = qId.mat()*(mat*S);
    }
 
-} // TC
-} // Sphere
-} // Boussinesq
-} // Model
-} // QuICC
+} // namespace TC
+} // namespace Sphere
+} // namespace Boussinesq
+} // namespace Model
+} // namespace QuICC

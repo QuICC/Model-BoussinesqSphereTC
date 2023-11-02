@@ -1,6 +1,7 @@
 /**
  * @file Transport.hpp
- * @brief Implementation of the transport equation for the Boussinesq thermal convection in a sphere
+ * @brief Implementation of the transport equation for the Boussinesq thermal
+ * convection in a sphere
  */
 
 #ifndef QUICC_MODEL_BOUSSINESQ_SPHERE_TC_TRANSPORT_HPP
@@ -24,52 +25,55 @@ namespace Sphere {
 
 namespace TC {
 
+/**
+ * @brief Implementation of the transport equation for the Boussinesq thermal
+ * convection in a sphere
+ */
+class Transport : public IScalarEquation
+{
+public:
    /**
-    * @brief Implementation of the transport equation for the Boussinesq thermal convection in a sphere
+    * @brief Simple constructor
+    *
+    * @param spEqParams  Shared equation parameters
     */
-   class Transport: public IScalarEquation
-   {
-      public:
-         /**
-          * @brief Simple constructor
-          *
-          * @param spEqParams  Shared equation parameters
-          */
-         Transport(SharedEquationParameters spEqParams, SpatialScheme::SharedCISpatialScheme spScheme, std::shared_ptr<Model::IModelBackend> spBackend);
+   Transport(SharedEquationParameters spEqParams,
+      SpatialScheme::SharedCISpatialScheme spScheme,
+      std::shared_ptr<Model::IModelBackend> spBackend);
 
-         /**
-          * @brief Simple empty destructor
-          */
-         virtual ~Transport() = default;
+   /**
+    * @brief Simple empty destructor
+    */
+   virtual ~Transport() = default;
 
-         /**
-          * @brief Initialize nonlinear interaction kernel
-          */
-         void initNLKernel(const bool force = false) final;
+   /**
+    * @brief Initialize nonlinear interaction kernel
+    */
+   void initNLKernel(const bool force = false) final;
 
-      protected:
-         /**
-          * @brief Set nonlinear component path
-          */
-         void setNLComponents() final;
+protected:
+   /**
+    * @brief Set nonlinear component path
+    */
+   void setNLComponents() final;
 
-         /**
-          * @brief Set variable requirements
-          */
-         void setRequirements() final;
+   /**
+    * @brief Set variable requirements
+    */
+   void setRequirements() final;
 
-         /**
-          * @brief Set the equation coupling information
-          */
-         void setCoupling() final;
+   /**
+    * @brief Set the equation coupling information
+    */
+   void setCoupling() final;
 
-      private:
-   };
+private:
+};
 
-}
-}
-}
-}
-}
+} // namespace TC
+} // namespace Sphere
+} // namespace Boussinesq
+} // namespace Equations
+} // namespace QuICC
 
 #endif // QUICC_MODEL_BOUSSINESQ_SPHERE_TC_TRANSPORT_HPP

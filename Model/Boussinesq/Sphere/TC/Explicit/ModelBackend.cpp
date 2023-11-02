@@ -602,8 +602,9 @@ struct BlockOptionsImpl : public details::BlockOptions
          {
             auto rowId = *pRowId;
             auto colId = rowId;
+            const auto& fields = this->implicitFields(rowId);
             auto descr = timeBlockBuilder(rowId, colId, res, eigs, bcs, nds);
-            buildBlock(rModelMatrix, descr, rowId, colId, matIdx, bcType, res,
+            buildBlock(rModelMatrix, descr, rowId, colId, fields, matIdx, bcType, res,
                   l, l, bcs, nds, false);
          }
       }
@@ -614,14 +615,15 @@ struct BlockOptionsImpl : public details::BlockOptions
 
          for (auto pRowId = imRange.first; pRowId != imRange.second; pRowId++)
          {
+            auto rowId = *pRowId;
+            const auto& fields = this->implicitFields(rowId);
             for (auto pColId = imRange.first; pColId != imRange.second;
                   pColId++)
             {
-               auto rowId = *pRowId;
                auto colId = *pColId;
                auto descr = implicitBlockBuilder(rowId, colId, res, eigs, bcs,
                      nds, isSplit);
-               buildBlock(rModelMatrix, descr, rowId, colId, matIdx, bcType,
+               buildBlock(rModelMatrix, descr, rowId, colId, fields, matIdx, bcType,
                      res, l, l, bcs, nds, isSplit);
             }
          }
@@ -633,14 +635,15 @@ struct BlockOptionsImpl : public details::BlockOptions
 
          for (auto pRowId = imRange.first; pRowId != imRange.second; pRowId++)
          {
+            auto rowId = *pRowId;
+            const auto& fields = this->implicitFields(rowId);
             for (auto pColId = imRange.first; pColId != imRange.second;
                   pColId++)
             {
-               auto rowId = *pRowId;
                auto colId = *pColId;
                auto descr = boundaryBlockBuilder(rowId, colId, res, eigs, bcs,
                      nds, isSplit);
-               buildBlock(rModelMatrix, descr, rowId, colId, matIdx, bcType,
+               buildBlock(rModelMatrix, descr, rowId, colId, fields, matIdx, bcType,
                      res, l, l, bcs, nds, isSplit);
             }
          }
@@ -650,14 +653,15 @@ struct BlockOptionsImpl : public details::BlockOptions
       {
          for (auto pRowId = imRange.first; pRowId != imRange.second; pRowId++)
          {
+            auto rowId = *pRowId;
+            const auto& fields = this->implicitFields(rowId);
             for (auto pColId = imRange.first; pColId != imRange.second;
                   pColId++)
             {
-               auto rowId = *pRowId;
                auto colId = *pColId;
                auto descr = splitBoundaryValueBlockBuilder(rowId, colId, res,
                      eigs, bcs, nds);
-               buildBlock(rModelMatrix, descr, rowId, colId, matIdx, bcType,
+               buildBlock(rModelMatrix, descr, rowId, colId, fields, matIdx, bcType,
                      res, l, l, bcs, nds, false);
             }
          }

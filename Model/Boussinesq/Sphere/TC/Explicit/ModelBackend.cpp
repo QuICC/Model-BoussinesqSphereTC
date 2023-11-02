@@ -324,7 +324,7 @@ struct BlockOptionsImpl : public details::BlockOptions
        }
        else
        {
-           // throw std::logic_error("Equations are not setup properly");
+           throw std::logic_error("Equations are not setup properly");
        }
 
        return descr;

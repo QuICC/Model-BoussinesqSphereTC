@@ -36,9 +36,5 @@ for r, t in zip(rows,tols):
 for r, t in zip(rows,tols):
     results.append(vt.tableTest("cfl.dat", ref_dir, data_dir, r, usecols=(0,1,3,4,5,6,7), tol = t, max_rows = r+1))
 
-# Angular momentum
-#for r, t in zip(rows,tols):
-#    results.append(vt.tableTest("angular_momentum.dat", ref_dir, data_dir, r, tol = t, max_rows = r+1))
-
 # Output test summary
 vt.printSummary(results, rows, reftol = tols)

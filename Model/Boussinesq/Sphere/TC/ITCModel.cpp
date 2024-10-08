@@ -123,7 +123,7 @@ func.func private @bwdVector(%Tor: tensor<?x?x?xcomplex<f64>>, %Pol: tensor<?x?x
     %TorTh2T = quiccir.transpose %TorTh2 permutation = [1, 2, 0] : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 3 :i64}
     %TorTh3 = quiccir.fr.prj %TorTh2T : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xf64> attributes{implptr = 4 :i64, kind = "P"}
     //
-    %PolTh1 = quiccir.jw.prj %Pol : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 11 :i64, kind = "DivR1D1R1_Zero"}
+    %PolTh1 = quiccir.jw.prj %Pol : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 14 :i64, kind = "DivR1D1R1_Zero"}
     %PolTh1T = quiccir.transpose %PolTh1 permutation = [1, 2, 0] : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 1 :i64}
     %PolTh2 = quiccir.al.prj %PolTh1T : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 21 :i64, kind = "D1"}
     %PolTh2T = quiccir.transpose %PolTh2 permutation = [1, 2, 0] : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 3 :i64}
@@ -137,13 +137,13 @@ func.func private @bwdVector(%Tor: tensor<?x?x?xcomplex<f64>>, %Pol: tensor<?x?x
     %TorPh2T = quiccir.transpose %TorPh2 permutation = [1, 2, 0] : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 3 :i64}
     %TorPh3 = quiccir.fr.prj %TorPh2T : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xf64> attributes{implptr = 4 :i64, kind = "P"}
     //
-    %PolPh1 = quiccir.jw.prj %Pol : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 11 :i64, kind = "DivR1D1R1_Zero"}
+    %PolPh1 = quiccir.jw.prj %Pol : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 14 :i64, kind = "DivR1D1R1_Zero"}
     %PolPh1T = quiccir.transpose %PolPh1 permutation = [1, 2, 0] : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 1 :i64}
     %PolPh2 = quiccir.al.prj %PolPh1T : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 13 :i64, kind = "DivS1Dp"}
     %PolPh2T = quiccir.transpose %PolPh2 permutation = [1, 2, 0] : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 3 :i64}
     %PolPh3 = quiccir.fr.prj %PolPh2T : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xf64> attributes{implptr = 4 :i64, kind = "P"}
     //
-    %Phi = quiccir.sub %PolPh3, %TorPh3 : tensor<?x?x?xf64>, tensor<?x?x?xf64> -> tensor<?x?x?xf64> attributes{implptr = 22 :i64}
+    %Phi = quiccir.sub %PolPh3, %TorPh3 : tensor<?x?x?xf64>, tensor<?x?x?xf64> -> tensor<?x?x?xf64> attributes{implptr = 24 :i64}
     return %R, %Theta, %Phi : tensor<?x?x?xf64>, tensor<?x?x?xf64>, tensor<?x?x?xf64>
 }
 
@@ -155,7 +155,7 @@ func.func private @bwdCurl(%Tor: tensor<?x?x?xcomplex<f64>>, %Pol: tensor<?x?x?x
     %TorR2T = quiccir.transpose %TorR2 permutation = [1, 2, 0] : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 3 :i64}
     %R = quiccir.fr.prj %TorR2T : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xf64> attributes{implptr = 4 :i64, kind = "P"}
     // Theta
-    %TorTh1 = quiccir.jw.prj %Tor : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 11 :i64, kind = "DivR1D1R1_Zero"}
+    %TorTh1 = quiccir.jw.prj %Tor : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 14 :i64, kind = "DivR1D1R1_Zero"}
     %TorTh1T = quiccir.transpose %TorTh1 permutation = [1, 2, 0] : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 1 :i64}
     %TorTh2 = quiccir.al.prj %TorTh1T : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 21 :i64, kind = "D1"}
     %TorTh2T = quiccir.transpose %TorTh2 permutation = [1, 2, 0] : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 3 :i64}
@@ -167,9 +167,9 @@ func.func private @bwdCurl(%Tor: tensor<?x?x?xcomplex<f64>>, %Pol: tensor<?x?x?x
     %PolTh2T = quiccir.transpose %PolTh2 permutation = [1, 2, 0] : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 3 :i64}
     %PolTh3 = quiccir.fr.prj %PolTh2T : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xf64> attributes{implptr = 4 :i64, kind = "P"}
     //
-    %Theta = quiccir.sub %TorTh3, %PolTh3 : tensor<?x?x?xf64>, tensor<?x?x?xf64> -> tensor<?x?x?xf64> attributes{implptr = 22 :i64}
+    %Theta = quiccir.sub %TorTh3, %PolTh3 : tensor<?x?x?xf64>, tensor<?x?x?xf64> -> tensor<?x?x?xf64> attributes{implptr = 24 :i64}
     // Phi
-    %TorPh1 = quiccir.jw.prj %Tor : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 11 :i64, kind = "DivR1D1R1_Zero"}
+    %TorPh1 = quiccir.jw.prj %Tor : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 14 :i64, kind = "DivR1D1R1_Zero"}
     %TorPh1T = quiccir.transpose %TorPh1 permutation = [1, 2, 0] : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 1 :i64}
     %TorPh2 = quiccir.al.prj %TorPh1T : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 13 :i64, kind = "DivS1Dp"}
     %TorPh2T = quiccir.transpose %TorPh2 permutation = [1, 2, 0] : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 3 :i64}
@@ -239,31 +239,29 @@ func.func private @fwdVector(%R: tensor<?x?x?xf64>, %Theta: tensor<?x?x?xf64>, %
 func.func private @nlScalar(%UR: tensor<?x?x?xf64>, %UTheta: tensor<?x?x?xf64>, %UPhi: tensor<?x?x?xf64>,
     %TdR: tensor<?x?x?xf64>, %TdTheta: tensor<?x?x?xf64>, %TdPhi: tensor<?x?x?xf64>) -> tensor<?x?x?xf64> {
     // U dot grad T
-    %DotT = quiccir.dot(%UR, %UTheta, %UPhi, %TdTR, %TdTTheta, %TdTPhi) :
-        (tensor<?x?x?xf64>, tensor<?x?x?xf64>, tensor<?x?x?xf64>, tensor<?x?x?xf64>, tensor<?x?x?xf64>, tensor<?x?x?xf64>) ->
-        (tensor<?x?x?xf64>, tensor<?x?x?xf64>, tensor<?x?x?xf64>)
-        attributes{implptr = 60}
+    %DotT = quiccir.dot(%UR, %UTheta, %UPhi), (%TdR, %TdTheta, %TdPhi) :
+        (tensor<?x?x?xf64>, tensor<?x?x?xf64>, tensor<?x?x?xf64>), (tensor<?x?x?xf64>, tensor<?x?x?xf64>, tensor<?x?x?xf64>) ->
+        tensor<?x?x?xf64>
+        attributes{implptr = 60, kind = "transport"}
     // U dot R
-    %DotR = quiccir.mul.const(%UR) : (tensor<?x?x?xf64>) -> tensor<?x?x?xf64>
-        attributes{implptr = 61, kind = "R"}
-    %TPhysNl = quiccir.sub %Dot, %DotR : tensor<?x?x?xf64>, tensor<?x?x?xf64> -> tensor<?x?x?xf64> attributes{implptr = 62}
-
+    %DotR = quiccir.mul.const %UR : tensor<?x?x?xf64> -> tensor<?x?x?xf64> attributes{implptr = 61, kind = "transport"}
+    %TPhysNl = quiccir.sub %DotT, %DotR : tensor<?x?x?xf64>, tensor<?x?x?xf64> -> tensor<?x?x?xf64> attributes{implptr = 24}
     return %TPhysNl : tensor<?x?x?xf64>
 }
 
 func.func private @nlVector(%UR: tensor<?x?x?xf64>, %UTheta: tensor<?x?x?xf64>, %UPhi: tensor<?x?x?xf64>,
     %CurlR: tensor<?x?x?xf64>, %CurlTheta: tensor<?x?x?xf64>, %CurlPhi: tensor<?x?x?xf64>, %T: tensor<?x?x?xf64>) -> (tensor<?x?x?xf64>, tensor<?x?x?xf64>, tensor<?x?x?xf64>) {
     // Cross
-    %Cross:3 = quiccir.cross(%UR, %UTheta, %UPhi, %CurlR, %CurlTheta, %CurlPhi) :
-        (tensor<?x?x?xf64>, tensor<?x?x?xf64>, tensor<?x?x?xf64>, tensor<?x?x?xf64>, tensor<?x?x?xf64>, tensor<?x?x?xf64>) ->
+    %Cross:3 = quiccir.cross(%UR, %UTheta, %UPhi), (%CurlR, %CurlTheta, %CurlPhi) :
+        (tensor<?x?x?xf64>, tensor<?x?x?xf64>, tensor<?x?x?xf64>), (tensor<?x?x?xf64>, tensor<?x?x?xf64>, tensor<?x?x?xf64>) ->
         (tensor<?x?x?xf64>, tensor<?x?x?xf64>, tensor<?x?x?xf64>)
-        attributes{implptr = 61}
+        attributes{implptr = 61, kind = "inertia"}
     // Add buoyancy
-    %Buoy = quiccir.mul.const(%T) : (tensor<?x?x?xf64>) -> tensor<?x?x?xf64>
-        attributes{implptr = 61, kind = "R"}
-    %RNl = quiccir.sub(%Cross#0, %Buoy) : tensor<?x?x?xf64>, tensor<?x?x?xf64> -> tensor<?x?x?xf64> attributes{implptr = 63}
-    return %Rnl, %Cross#2, %Cross#3 : tensor<?x?x?xf64>, tensor<?x?x?xf64>, tensor<?x?x?xf64>
+    %Buoy = quiccir.mul.const %T : tensor<?x?x?xf64> -> tensor<?x?x?xf64> attributes{implptr = 61, kind = "buoyancy"}
+    %RNl = quiccir.sub %Cross#0, %Buoy : tensor<?x?x?xf64>, tensor<?x?x?xf64> -> tensor<?x?x?xf64> attributes{implptr = 24}
+    return %RNl, %Cross#1, %Cross#2 : tensor<?x?x?xf64>, tensor<?x?x?xf64>, tensor<?x?x?xf64>
 }
+
 
 func.func @entry(%T: tensor<?x?x?xcomplex<f64>>, %Tor: tensor<?x?x?xcomplex<f64>>, %Pol: tensor<?x?x?xcomplex<f64>>) -> (tensor<?x?x?xcomplex<f64>>, tensor<?x?x?xcomplex<f64>>, tensor<?x?x?xcomplex<f64>>) {
     %TPhys = call @bwdScalar(%T) : (tensor<?x?x?xcomplex<f64>>) -> tensor<?x?x?xf64>
@@ -279,58 +277,6 @@ func.func @entry(%T: tensor<?x?x?xcomplex<f64>>, %Tor: tensor<?x?x?xcomplex<f64>
    )mlir";
    spSim->addGraph(graphStr);
 }
-
-//    std::string graphStr = R"mlir(
-//       func.func private @bwd(%T: tensor<?x?x?xcomplex<f64>>, %Tor: tensor<?x?x?xcomplex<f64>>, %Pol: tensor<?x?x?xcomplex<f64>>) {
-//       // T
-//       %T1 = quiccir.jw.prj %T : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 0 :i64, kind = "P"}
-//       %T1T = quiccir.transpose %T1 permutation = [1, 2, 0] : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 1 :i64}
-//       %T2 = quiccir.al.prj %T1T : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 2 :i64, kind = "P"}
-//       %T2T = quiccir.transpose %T2 permutation = [1, 2, 0] : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 3 :i64}
-//       %T3 = quiccir.fr.prj %T2T : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xf64> attributes{implptr = 4 :i64, kind = "P"}
-//       // DT
-
-//       // Pol
-//       %Pol1 = quiccir.jw.prj %Pol : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 0 :i64}
-//       %Pol1T = quiccir.transpose %Pol1 permutation = [1, 2, 0] : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 1 :i64}
-//       %Pol2 = quiccir.al.prj %Pol1T : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 2 :i64}
-//       %Pol2T = quiccir.transpose %Pol2 permutation = [1, 2, 0] : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 3 :i64}
-//       %Pol3 = quiccir.fr.prj %Pol2T : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xf64> attributes{implptr = 4 :i64}
-
-//       // Tor
-//       return %Pol3 : tensor<?x?x?xf64>
-//       }
-
-//       func.func private @nl(%T: tensor<?x?x?xcomplex<f64>>, %Tor: tensor<?x?x?xcomplex<f64>>, %Pol: tensor<?x?x?xcomplex<f64>>) {
-//       //
-//       %Pol1 = quiccir.jw.prj %Pol : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 0 :i64}
-//       %Pol1T = quiccir.transpose %Pol1 permutation = [1, 2, 0] : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 1 :i64}
-//       %Pol2 = quiccir.al.prj %Pol1T : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 2 :i64}
-//       %Pol2T = quiccir.transpose %Pol2 permutation = [1, 2, 0] : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 3 :i64}
-//       %Pol3 = quiccir.fr.prj %Pol2T : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xf64> attributes{implptr = 4 :i64}
-//       return %Pol3 : tensor<?x?x?xf64>
-//       }
-
-//       func.func private @fwd(%R: tensor<?x?x?xf64>) -> (tensor<?x?x?xcomplex<f64>>) {
-//       //
-//       %R1 = quiccir.fr.int %R : tensor<?x?x?xf64> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 10 :i64}
-//       %R1T = quiccir.transpose %R1 permutation = [2, 0, 1] : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 11 :i64}
-//       %R2 = quiccir.al.int %R1T : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 12 :i64}
-//       %R2T = quiccir.transpose %R2 permutation = [2, 0, 1] : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 13 :i64}
-//       %R3 = quiccir.jw.int %R2T : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 14 :i64}
-//       return %R3 : tensor<?x?x?xcomplex<f64>>
-//       }
-
-//       func.func @entry(%T: tensor<?x?x?xcomplex<f64>>, %Tor: tensor<?x?x?xcomplex<f64>>, %Pol: tensor<?x?x?xcomplex<f64>>) -> (tensor<?x?x?xcomplex<f64>>, tensor<?x?x?xcomplex<f64>>, tensor<?x?x?xcomplex<f64>>) {
-//       %tmp = call @bwd(%Polur) : (tensor<?x?x?xcomplex<f64>>) -> tensor<?x?x?xf64>
-//       %PolNewur = call @fwd(%tmp) : (tensor<?x?x?xf64>) -> tensor<?x?x?xcomplex<f64>>
-//       return (%TNl, %TorNl, %PolNl): (tensor<?x?x?xcomplex<f64>>, tensor<?x?x?xcomplex<f64>>, tensor<?x?x?xcomplex<f64>>)
-//       }
-//     }
-//   )mlir";
-
-
-
 
 void ITCModel::addStates(SharedStateGenerator spGen)
 {

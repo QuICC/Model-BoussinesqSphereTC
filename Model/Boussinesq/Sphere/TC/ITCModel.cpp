@@ -231,7 +231,7 @@ func.func private @fwdVector(%R: tensor<?x?x?xf64>, %Theta: tensor<?x?x?xf64>, %
     %PhiPol2T = quiccir.transpose %PhiPol2 permutation = [2, 0, 1] : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 43 :i64}
     %PhiPol3 = quiccir.jw.int %PhiPol2T : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 54 :i64, kind = "I4DivR1D1R1_Zero"}
     //
-    %tmp = quiccir.add %ThetaPol3, %PhiPol3 : tensor<?x?x?xcomplex<f64>>, tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 53 :i64}
+    %tmp = quiccir.add %ThetaPol3, %PhiPol3 : tensor<?x?x?xcomplex<f64>>, tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 55 :i64}
     %Pol = quiccir.sub %tmp, %RPol3 : tensor<?x?x?xcomplex<f64>>, tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 52 :i64}
     return %Tor, %Pol : tensor<?x?x?xcomplex<f64>>, tensor<?x?x?xcomplex<f64>>
 }
@@ -255,9 +255,9 @@ func.func private @nlVector(%UR: tensor<?x?x?xf64>, %UTheta: tensor<?x?x?xf64>, 
     %Cross:3 = quiccir.cross(%UR, %UTheta, %UPhi), (%CurlR, %CurlTheta, %CurlPhi) :
         (tensor<?x?x?xf64>, tensor<?x?x?xf64>, tensor<?x?x?xf64>), (tensor<?x?x?xf64>, tensor<?x?x?xf64>, tensor<?x?x?xf64>) ->
         (tensor<?x?x?xf64>, tensor<?x?x?xf64>, tensor<?x?x?xf64>)
-        attributes{implptr = 61, kind = "inertia"}
+        attributes{implptr = 62, kind = "inertia"}
     // Add buoyancy
-    %Buoy = quiccir.mul.const %T : tensor<?x?x?xf64> -> tensor<?x?x?xf64> attributes{implptr = 61, kind = "buoyancy"}
+    %Buoy = quiccir.mul.const %T : tensor<?x?x?xf64> -> tensor<?x?x?xf64> attributes{implptr = 63, kind = "buoyancy"}
     %RNl = quiccir.sub %Cross#0, %Buoy : tensor<?x?x?xf64>, tensor<?x?x?xf64> -> tensor<?x?x?xf64> attributes{implptr = 24}
     return %RNl, %Cross#1, %Cross#2 : tensor<?x?x?xf64>, tensor<?x?x?xf64>, tensor<?x?x?xf64>
 }

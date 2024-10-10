@@ -202,13 +202,13 @@ func.func private @fwdVector(%R: tensor<?x?x?xf64>, %Theta: tensor<?x?x?xf64>, %
     %ThetaTor1T = quiccir.transpose %ThetaTor1 permutation = [2, 0, 1] : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 41 :i64}
     %ThetaTor2 = quiccir.al.int %ThetaTor1T : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 50 :i64, kind = "DivLlDivS1Dp"}
     %ThetaTor2T = quiccir.transpose %ThetaTor2 permutation = [2, 0, 1] : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 43 :i64}
-    %ThetaTor3 = quiccir.jw.int %ThetaTor2T : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 44 :i64, kind = "P"}
+    %ThetaTor3 = quiccir.jw.int %ThetaTor2T : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 74 :i64, kind = "I2_Zero"}
     //
     %PhiTor1 = quiccir.fr.int %Phi : tensor<?x?x?xf64> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 40 :i64, kind = "P"}
     %PhiTor1T = quiccir.transpose %PhiTor1 permutation = [2, 0, 1] : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 41 :i64}
     %PhiTor2 = quiccir.al.int %PhiTor1T : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 51 :i64, kind = "DivLlD1"}
     %PhiTor2T = quiccir.transpose %PhiTor2 permutation = [2, 0, 1] : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 43 :i64}
-    %PhiTor3 = quiccir.jw.int %PhiTor2T : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 44 :i64, kind = "P"}
+    %PhiTor3 = quiccir.jw.int %PhiTor2T : tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 74 :i64, kind = "I2_Zero"}
     //
     %Tor = quiccir.sub %ThetaTor3, %PhiTor3 : tensor<?x?x?xcomplex<f64>>, tensor<?x?x?xcomplex<f64>> -> tensor<?x?x?xcomplex<f64>> attributes{implptr = 52 :i64}
 
@@ -252,7 +252,7 @@ func.func private @nlScalar(%UR: tensor<?x?x?xf64>, %UTheta: tensor<?x?x?xf64>, 
 func.func private @nlVector(%UR: tensor<?x?x?xf64>, %UTheta: tensor<?x?x?xf64>, %UPhi: tensor<?x?x?xf64>,
     %CurlR: tensor<?x?x?xf64>, %CurlTheta: tensor<?x?x?xf64>, %CurlPhi: tensor<?x?x?xf64>, %T: tensor<?x?x?xf64>) -> (tensor<?x?x?xf64>, tensor<?x?x?xf64>, tensor<?x?x?xf64>) {
     // Cross
-    %Cross:3 = quiccir.cross(%UR, %UTheta, %UPhi), (%CurlR, %CurlTheta, %CurlPhi) :
+    %Cross:3 = quiccir.cross(%CurlR, %CurlTheta, %CurlPhi), (%UR, %UTheta, %UPhi) :
         (tensor<?x?x?xf64>, tensor<?x?x?xf64>, tensor<?x?x?xf64>), (tensor<?x?x?xf64>, tensor<?x?x?xf64>, tensor<?x?x?xf64>) ->
         (tensor<?x?x?xf64>, tensor<?x?x?xf64>, tensor<?x?x?xf64>)
         attributes{implptr = 62, kind = "inertia"}

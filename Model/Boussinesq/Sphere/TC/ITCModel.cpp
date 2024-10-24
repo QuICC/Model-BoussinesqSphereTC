@@ -267,7 +267,7 @@ func.func private @nlVector(%UR: !real, %UTheta: !real, %UPhi: !real,
 }
 
 
-func.func @entry(%T: !complex, %Tor: !complex, %Pol: !complex) -> (!complex, !complex, !complex) {
+func.func @entry(%T: !complex, %Tor: !complex, %Pol: !complex) -> (!complex, !complex, !complex, !real, !real, !real) {
     %TPhys = call @bwdScalar(%T) : (!complex) -> !real
     %TGrad:3 = call @bwdGradScalar(%T) : (!complex) -> (!real, !real, !real)
     %Vel:3 = call @bwdVector(%Tor, %Pol) : (!complex, !complex) -> (!real, !real, !real)

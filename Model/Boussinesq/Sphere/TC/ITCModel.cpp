@@ -78,8 +78,8 @@ void ITCModel::addEquations(SharedSimulation spSim)
    // Add Graph
    std::string graphStr = R"mlir(
 // type aliases
-!real = !real
-!complex = !complex
+!real = tensor<?x?x?xf64>
+!complex = tensor<?x?x?xcomplex<f64>>
 
 func.func private @bwdScalar(%S: !complex) -> !real {
     // backward scalar path

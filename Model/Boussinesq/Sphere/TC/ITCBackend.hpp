@@ -87,7 +87,8 @@ protected:
     * @param isSplitOperator  Is second operator of split 4th order system?
     */
    void applyTau(SparseMatrix& mat, const SpectralFieldId& rowId,
-      const SpectralFieldId& colId, const int l, const Resolution& res,
+      const SpectralFieldId& colId, const int l,
+      std::shared_ptr<details::BlockOptions> opts, const Resolution& res,
       const BcMap& bcs, const NonDimensional::NdMap& nds,
       const bool isSplitOperator) const override;
 
@@ -97,6 +98,7 @@ protected:
     * @param mat        Input/Output matrix to store galerkin stencil
     * @param fID        Field ID
     * @param l          Harmonic degree
+    * @param opts       Options
     * @param res        Resolution object
     * @param makeSquare Truncate operator to make square
     * @param bcs        Boundary conditions
@@ -114,14 +116,15 @@ protected:
     * @param colId   ID of field
     * @param lr      Row space harmonic degree
     * @param lc      Column space harmonic degree
+    * @param opts    Options
     * @param res     Resolution object
     * @param bcs     Boundary conditions
     * @param nds     Nondimensional parameters
     */
    void applyGalerkinStencil(SparseMatrix& decMat, const SpectralFieldId& rowId,
       const SpectralFieldId& colId, const int lr, const int lc,
-      const Resolution& res, const BcMap& bcs,
-      const NonDimensional::NdMap& nds) const override;
+      std::shared_ptr<details::BlockOptions> opts, const Resolution& res,
+      const BcMap& bcs, const NonDimensional::NdMap& nds) const override;
 
 private:
 };

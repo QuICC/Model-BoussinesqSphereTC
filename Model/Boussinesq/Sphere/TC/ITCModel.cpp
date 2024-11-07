@@ -246,10 +246,10 @@ func.func private @nlScalar(%UR: !real, %UTheta: !real, %UPhi: !real,
     %DotT = quiccir.dot(%UR, %UTheta, %UPhi), (%TdR, %TdTheta, %TdPhi) :
         (!real, !real, !real), (!real, !real, !real) ->
         !real
-        attributes{implptr = 60, kind = "transport"}
+        attributes{kind = "transport"}
     // U dot R
-    %DotR = quiccir.mul.const %UR : !real -> !real attributes{implptr = 61, kind = "transport"}
-    %TPhysNl = quiccir.sub %DotT, %DotR : !real, !real -> !real attributes{implptr = 24}
+    %DotR = quiccir.mul.const %UR : !real -> !real attributes{kind = "transport"}
+    %TPhysNl = quiccir.sub %DotT, %DotR : !real, !real -> !real
     return %TPhysNl : !real
 }
 
@@ -259,10 +259,10 @@ func.func private @nlVector(%UR: !real, %UTheta: !real, %UPhi: !real,
     %Cross:3 = quiccir.cross(%CurlR, %CurlTheta, %CurlPhi), (%UR, %UTheta, %UPhi) :
         (!real, !real, !real), (!real, !real, !real) ->
         (!real, !real, !real)
-        attributes{implptr = 62, kind = "inertia"}
+        attributes{kind = "inertia"}
     // Add buoyancy
-    %Buoy = quiccir.mul.const %T : !real -> !real attributes{implptr = 63, kind = "buoyancy"}
-    %RNl = quiccir.sub %Cross#0, %Buoy : !real, !real -> !real attributes{implptr = 24}
+    %Buoy = quiccir.mul.const %T : !real -> !real attributes{kind = "buoyancy"}
+    %RNl = quiccir.sub %Cross#0, %Buoy : !real, !real -> !real
     return %RNl, %Cross#1, %Cross#2 : !real, !real, !real
 }
 

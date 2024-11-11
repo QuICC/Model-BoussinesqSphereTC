@@ -279,7 +279,14 @@ func.func @entry(%T: !complex, %Tor: !complex, %Pol: !complex) -> (!complex, !co
     return %TNl, %TorNl, %PolNl, %Vel#0, %Vel#1, %Vel#2: !complex, !complex, !complex, !real, !real, !real
 }
    )mlir";
-   spSim->addGraph(graphStr);
+
+   MHDFloat Ra = spSim->eqParams()->nd(NonDimensional::Rayleigh::id());
+   MHDFloat Pr = spSim->eqParams()->nd(NonDimensional::Prandtl::id());
+   Graph::PhysicalParameters<MHDFloat> physParams;
+   physParams.transport = 1.0;
+   physParams.inertia = 1.0;
+   physParams.buoyancy = Ra / Pr;
+   spSim->addGraph(graphStr, physParams);
 }
 
 void ITCModel::addStates(SharedStateGenerator spGen)

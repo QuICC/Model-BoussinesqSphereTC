@@ -75,6 +75,7 @@ void ITCModel::addEquations(SharedSimulation spSim)
    spSim->addEquation<Equations::Boussinesq::Sphere::TC::Momentum>(
       this->spBackend());
 
+   #ifdef QUICC_USE_MLIR_GRAPH
    // Add Graph
    std::string graphStr = R"mlir(
 // type aliases
@@ -287,6 +288,7 @@ func.func @entry(%T: !complex, %Tor: !complex, %Pol: !complex) -> (!complex, !co
    physParams.inertia = 1.0;
    physParams.buoyancy = Ra / Pr;
    spSim->addGraph(graphStr, physParams);
+   #endif
 }
 
 void ITCModel::addStates(SharedStateGenerator spGen)

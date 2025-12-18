@@ -31,6 +31,8 @@
 #include "QuICC/Io/Variable/SphereTorPolNSpectrumWriter.hpp"
 #include "QuICC/PhysicalNames/Temperature.hpp"
 #include "QuICC/PhysicalNames/Velocity.hpp"
+#include "QuICC/NonDimensional/Rayleigh.hpp"
+#include "QuICC/NonDimensional/Prandtl.hpp"
 
 namespace QuICC {
 
